@@ -507,7 +507,7 @@ namespace Tavenem.Time
             {
                 if (!TryGetDigit(input[index], out var digit))
                 {
-                    if (input.Slice(index, nfi.NumberGroupSeparator.Length).Equals(nfi.NumberGroupSeparator))
+                    if (input.Slice(index, nfi.NumberGroupSeparator.Length).Equals(nfi.NumberGroupSeparator.AsSpan(), StringComparison.Ordinal))
                     {
                         index += nfi.NumberGroupSeparator.Length;
                         continue;

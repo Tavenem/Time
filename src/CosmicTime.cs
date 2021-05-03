@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Tavenem.Time
 {
@@ -40,6 +41,7 @@ namespace Tavenem.Time
     /// </remarks>
     [Serializable]
     [DataContract]
+    [JsonConverter(typeof(CosmicTimeConverter))]
     public class CosmicTime : ISerializable
     {
         private const string DefaultCurrentEpoch = "Anthropocene Epoch";
@@ -70,12 +72,17 @@ namespace Tavenem.Time
         /// </summary>
         public IReadOnlyList<Epoch> Epochs => (_epochs ?? new List<Epoch>()).AsReadOnly();
 
-        [DataMember(Order = 3)]
-        private Duration _now;
         /// <summary>
-        /// The elapsed time since the beginning of the current epoch.
+        /// <para>
+        /// The present moment.
+        /// </para>
+        /// <para>
+        /// Read-only. Adjust with <see cref="AddTime(Duration)"/> or <see
+        /// cref="SubtractTime(Duration)"/>.
+        /// </para>
         /// </summary>
-        public Instant Now => new(_now);
+        [DataMember(Order = 3)]
+        public Instant Now { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of <see cref="CosmicTime"/> based on the current time.
@@ -85,8 +92,15 @@ namespace Tavenem.Time
         /// <summary>
         /// Initializes a new instance of <see cref="CosmicTime"/> with the given initial value.
         /// </summary>
-        /// <param name="present">The elapsed time since the beginning of the current epoch.</param>
-        public CosmicTime(Duration present) => _now = present;
+        /// <param name="present">The present moment.</param>
+        /// <param name="epochs">A collection of epochs which constitute the timeline of the universe.</param>
+        /// <param name="currentEpoch">The name of the current epoch. May be <see langword="null"/>.</param>
+        public CosmicTime(Instant present, List<Epoch>? epochs = null, string? currentEpoch = null)
+        {
+            Now = present;
+            _epochs = epochs?.ToList();
+            CurrentEpoch = currentEpoch;
+        }
 
         /// <summary>
         /// Initializes a new instance of <see cref="CosmicTime"/> with the given initial value.
@@ -95,8 +109,8 @@ namespace Tavenem.Time
         /// <param name="epochs">A collection of epochs which constitute the timeline of the universe.</param>
         public CosmicTime(Duration present, params Epoch[] epochs)
         {
-            _now = present;
-            _epochs = epochs.ToList();
+            Now = new(present);
+            _epochs = epochs.Length == 0 ? null : epochs.ToList();
         }
 
         /// <summary>
@@ -107,23 +121,13 @@ namespace Tavenem.Time
         /// <param name="epochs">A collection of epochs which constitute the timeline of the universe.</param>
         public CosmicTime(Duration present, string? currentEpoch, params Epoch[] epochs)
         {
-            _now = present;
+            Now = new(present);
             CurrentEpoch = currentEpoch;
-            _epochs = epochs.ToList();
-        }
-
-        private CosmicTime(Duration present, List<Epoch>? epochs = null, string? currentEpoch = null)
-        {
-            _now = present;
-            if (epochs != null)
-            {
-                _epochs = epochs?.ToList();
-            }
-            CurrentEpoch = currentEpoch;
+            _epochs = epochs.Length == 0 ? null : epochs.ToList();
         }
 
         private CosmicTime(SerializationInfo info, StreamingContext context) : this(
-            (Duration?)info.GetValue(nameof(_now), typeof(Duration)) ?? default,
+            (Instant?)info.GetValue(nameof(Now), typeof(Instant)) ?? default,
             (List<Epoch>?)info.GetValue(nameof(_epochs), typeof(List<Epoch>)),
             (string?)info.GetValue(nameof(CurrentEpoch), typeof(string)))
         { }
@@ -165,7 +169,7 @@ namespace Tavenem.Time
             var ticks = dateTime.ToUniversalTime().Ticks;
             var years = (uint)(ticks / (TimeSpan.TicksPerSecond * Duration.SecondsPerDay));
             ticks %= TimeSpan.TicksPerSecond * Duration.SecondsPerDay;
-            return new CosmicTime(new Duration(years: years, nanoseconds: (ulong)ticks * Duration.NanosecondsPerTick), epochs, currentEpoch);
+            return new CosmicTime(new(new Duration(years: years, nanoseconds: (ulong)ticks * Duration.NanosecondsPerTick)), epochs, currentEpoch);
         }
 
         /// <summary>
@@ -203,7 +207,7 @@ namespace Tavenem.Time
             var ticks = dateTime.ToUniversalTime().Ticks;
             var years = (uint)(ticks / (TimeSpan.TicksPerSecond * Duration.SecondsPerDay));
             ticks %= TimeSpan.TicksPerSecond * Duration.SecondsPerDay;
-            return new CosmicTime(new Duration(years: years, nanoseconds: (ulong)ticks * Duration.NanosecondsPerTick), epochs, currentEpoch);
+            return new CosmicTime(new(new Duration(years: years, nanoseconds: (ulong)ticks * Duration.NanosecondsPerTick)), epochs, currentEpoch);
         }
 
         /// <summary>
@@ -457,29 +461,84 @@ namespace Tavenem.Time
         /// </param>
         public void AddTime(Duration duration)
         {
-            if (duration.IsPerpetual || duration.IsZero)
+            if (Now.IsPerpetual
+                || duration.IsPerpetual
+                || duration.IsZero)
             {
                 return;
             }
 
-            var t = _now;
-            try
+            var t = Now;
+            while (t.Epoch >= 0)
             {
-                t = t.Add(duration);
+                try
+                {
+                    var d = t.Offset.Add(duration);
+
+                    if (d.IsNegative)
+                    {
+                        if (t.Epoch == 0
+                            || (t.Epoch < 0
+                            && Epochs.Count == 0)
+                            || t.Epoch >= Epochs.Count)
+                        {
+                            t = new (Duration.Zero, Epochs.Count == 0 ? -1 : 0);
+                            break;
+                        }
+
+                        duration += t.Offset;
+                        t = new(Epochs[t.Epoch - 1].Duration, t.Epoch - 1);
+                        continue;
+                    }
+
+                    if (t.Epoch >= 0
+                        && Epochs[t.Epoch].Duration < d)
+                    {
+                        t = new(
+                            d - Epochs[t.Epoch].Duration,
+                            t.Epoch >= Epochs.Count - 1
+                                ? -1
+                                : t.Epoch + 1);
+                    }
+                    else
+                    {
+                        t = new(d, t.Epoch);
+                    }
+                    break;
+                }
+                catch (OverflowException)
+                {
+                    if (duration.IsNegative)
+                    {
+                        if (t.Epoch == 0 || t.Epoch > Epochs.Count)
+                        {
+                            t = new(Duration.Zero, Epochs.Count == 0 ? -1 : 0);
+                            break;
+                        }
+
+                        duration += t.Offset;
+                        t = new(
+                            Epochs[t.Epoch - 1].Duration,
+                            t.Epoch - 1);
+                    }
+                    else if (t.Epoch < 0 || t.Epoch >= Epochs.Count)
+                    {
+                        t = new(Duration.MaxValue, -1);
+                        break;
+                    }
+                    else
+                    {
+                        duration -= Epochs[t.Epoch].Duration - t.Offset;
+                        t = new(
+                            Duration.Zero,
+                            t.Epoch == Epochs.Count - 1
+                                ? -1
+                                : t.Epoch + 1);
+                    }
+                }
             }
-            catch (OverflowException)
-            {
-                t = Duration.MaxValue;
-            }
-            if (t.IsPerpetual)
-            {
-                t = t.IsNegative ? Duration.Zero : Duration.MaxValue;
-            }
-            else if (t.IsNegative)
-            {
-                t = Duration.Zero;
-            }
-            _now = t;
+
+            Now = t;
         }
 
         /// <summary>
@@ -591,7 +650,7 @@ namespace Tavenem.Time
         /// required permission.</exception>
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue(nameof(_now), _now);
+            info.AddValue(nameof(Now), Now);
             info.AddValue(nameof(_epochs), _epochs);
             info.AddValue(nameof(CurrentEpoch), CurrentEpoch);
         }
@@ -633,24 +692,7 @@ namespace Tavenem.Time
         /// maximum allowed value instead.
         /// </para>
         /// </param>
-        public void SubtractTime(Duration duration)
-        {
-            if (duration.IsPerpetual || duration.IsZero)
-            {
-                return;
-            }
-
-            var t = _now.Subtract(duration);
-            if (t.IsPerpetual)
-            {
-                t = t.IsNegative ? Duration.Zero : Duration.MaxValue;
-            }
-            else if (t.IsNegative)
-            {
-                t = Duration.Zero;
-            }
-            _now = t;
-        }
+        public void SubtractTime(Duration duration) => AddTime(duration.Negate());
 
         /// <summary>
         /// Converts this instance to a <see cref="DateTime"/> value.
@@ -670,7 +712,7 @@ namespace Tavenem.Time
         /// <exception cref="ArgumentOutOfRangeException"/>
         public DateTime ToDateTime()
         {
-            var duration = _now + _DateTimeEpoch;
+            var duration = Now.Offset + _DateTimeEpoch;
             if (duration.IsPerpetual
                 || duration.AeonSequence?.Count > 0
                 || duration.Years > 9998)
@@ -706,7 +748,7 @@ namespace Tavenem.Time
         /// <exception cref="ArgumentOutOfRangeException"/>
         public DateTimeOffset ToDateTimeOffset()
         {
-            var duration = _now + _DateTimeEpoch;
+            var duration = Now.Offset + _DateTimeEpoch;
             if (duration.IsPerpetual
                 || duration.AeonSequence?.Count > 0
                 || duration.Years > 9998)
@@ -1717,7 +1759,7 @@ namespace Tavenem.Time
         /// regardless of format.
         /// </para>
         /// </remarks>
-        public string ToString(string format, IFormatProvider formatProvider) => _now.ToString(format, formatProvider);
+        public string ToString(string format, IFormatProvider formatProvider) => Now.ToString(format, formatProvider);
 
         /// <summary>
         /// Converts the value of <see cref="Now"/> to its equivalent string representation using
@@ -1730,7 +1772,7 @@ namespace Tavenem.Time
         /// <exception cref="FormatException">
         /// <paramref name="formatProvider"/> is not a valid provider for <see cref="Duration"/>.
         /// </exception>
-        public string ToString(IFormatProvider formatProvider) => _now.ToString(formatProvider);
+        public string ToString(IFormatProvider formatProvider) => Now.ToString(formatProvider);
 
         /// <summary>
         /// Converts the value of <see cref="Now"/> to its equivalent string representation using
@@ -2050,7 +2092,7 @@ namespace Tavenem.Time
         /// regardless of format.
         /// </para>
         /// </remarks>
-        public string ToString(string format) => _now.ToString(format);
+        public string ToString(string format) => Now.ToString(format);
 
         /// <summary>
         /// <para>
@@ -2062,7 +2104,7 @@ namespace Tavenem.Time
         /// regardless of format.
         /// </para>
         /// </summary>
-        public override string ToString() => _now.ToString();
+        public override string ToString() => Now.ToString();
 
 #pragma warning disable CS1591
 

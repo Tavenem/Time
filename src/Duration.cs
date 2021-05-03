@@ -24,7 +24,6 @@ namespace Tavenem.Time
     /// </summary>
     [Serializable]
     [DataContract]
-    [JsonConverter(typeof(DurationConverter))]
     public partial struct Duration :
         IEquatable<Duration>,
         IEquatable<RelativeDuration>,
@@ -98,6 +97,7 @@ namespace Tavenem.Time
         /// <see cref="Femtoseconds"/>. This is a calculated property which reflects the value
         /// of <see cref="TotalYoctoseconds"/>.
         /// </summary>
+        [JsonIgnore]
         public uint Attoseconds => (uint)(TotalYoctoseconds / YoctosecondsPerAttosecond % AttosecondsPerFemtosecond);
 
         /// <summary>
@@ -112,6 +112,7 @@ namespace Tavenem.Time
         /// An SI day is exactly 86400 seconds long.
         /// </para>
         /// </summary>
+        [JsonIgnore]
         public uint Days => (uint)(TotalNanoseconds / NanosecondsPerDay);
 
         /// <summary>
@@ -119,6 +120,7 @@ namespace Tavenem.Time
         /// <see cref="Picoseconds"/>. This is a calculated property which reflects the value
         /// of <see cref="TotalYoctoseconds"/>.
         /// </summary>
+        [JsonIgnore]
         public uint Femtoseconds => (uint)(TotalYoctoseconds / YoctosecondsPerFemtosecond % FemtosecondsPerPicosecond);
 
         /// <summary>
@@ -130,6 +132,7 @@ namespace Tavenem.Time
         /// This is a calculated property which reflects the value of <see cref="TotalNanoseconds"/>.
         /// </para>
         /// </summary>
+        [JsonIgnore]
         public uint Hours => (uint)(TotalNanoseconds / NanosecondsPerHour % HoursPerDay);
 
         /// <summary>
@@ -149,17 +152,20 @@ namespace Tavenem.Time
         /// Indicates that this <see cref="Duration"/> represents an infinite amount of
         /// time in the positive direction.
         /// </summary>
+        [JsonIgnore]
         public bool IsPositiveInfinity => IsPerpetual && !IsNegative;
 
         /// <summary>
         /// Indicates that this <see cref="Duration"/> represents an infinite amount of
         /// time in the negative direction.
         /// </summary>
+        [JsonIgnore]
         public bool IsNegativeInfinity => IsPerpetual && IsNegative;
 
         /// <summary>
         /// Whether this <see cref="Duration"/> represents zero time.
         /// </summary>
+        [JsonIgnore]
         public bool IsZero => !IsPerpetual && Years == 0 && TotalNanoseconds == 0 && TotalYoctoseconds == 0 && PlanckTime == 0 && (AeonSequence?.Count ?? 0) == 0;
 
         /// <summary>
@@ -167,6 +173,7 @@ namespace Tavenem.Time
         /// <see cref="Milliseconds"/>. This is a calculated property which reflects the value of <see
         /// cref="TotalNanoseconds"/>.
         /// </summary>
+        [JsonIgnore]
         public uint Microseconds => (uint)(TotalNanoseconds / NanosecondsPerMicrosecond % MicrosecondsPerMillisecond);
 
         /// <summary>
@@ -174,6 +181,7 @@ namespace Tavenem.Time
         /// <see cref="Nanoseconds"/>. This is a calculated property which reflects the value of <see
         /// cref="TotalNanoseconds"/>.
         /// </summary>
+        [JsonIgnore]
         public uint Milliseconds => (uint)(TotalNanoseconds / NanosecondsPerMillisecond % MillisecondsPerSecond);
 
         /// <summary>
@@ -185,6 +193,7 @@ namespace Tavenem.Time
         /// This is a calculated property which reflects the value of <see cref="TotalNanoseconds"/>.
         /// </para>
         /// </summary>
+        [JsonIgnore]
         public uint Minutes => (uint)(TotalNanoseconds / NanosecondsPerMinute % MinutesPerHour);
 
         /// <summary>
@@ -203,6 +212,7 @@ namespace Tavenem.Time
         /// property is provided as a convenience for obtaining the more intuitive number of
         /// nanoseconds.
         /// </remarks>
+        [JsonIgnore]
         public uint Nanoseconds => (uint)(TotalNanoseconds % NanosecondsPerMicrosecond);
 
         /// <summary>
@@ -210,6 +220,7 @@ namespace Tavenem.Time
         /// <see cref="Yoctoseconds"/>. This is a calculated property which reflects the value
         /// of <see cref="TotalYoctoseconds"/>.
         /// </summary>
+        [JsonIgnore]
         public uint Picoseconds => (uint)(TotalYoctoseconds / YoctosecondsPerPicosecond);
 
         /// <summary>
@@ -233,11 +244,13 @@ namespace Tavenem.Time
         /// This is a calculated property which reflects the value of <see cref="TotalNanoseconds"/>.
         /// </para>
         /// </summary>
+        [JsonIgnore]
         public uint Seconds => (uint)(TotalNanoseconds / NanosecondsPerSecond % SecondsPerMinute);
 
         /// <summary>
         /// A number that indicates the sign (negative, positive, or zero) of this instance.
         /// </summary>
+        [JsonIgnore]
         public int Sign
         {
             get
@@ -310,6 +323,7 @@ namespace Tavenem.Time
         /// calculated property is provided as a convenience for obtaining the more intuitive number
         /// of yoctoseconds.
         /// </remarks>
+        [JsonIgnore]
         public uint Yoctoseconds => (uint)(TotalYoctoseconds % YoctosecondsPerZeptosecond);
 
         /// <summary>
@@ -317,6 +331,7 @@ namespace Tavenem.Time
         /// <see cref="Attoseconds"/>. This is a calculated property which reflects the value of
         /// <see cref="TotalYoctoseconds"/>.
         /// </summary>
+        [JsonIgnore]
         public uint Zeptoseconds => (uint)(TotalYoctoseconds / YoctosecondsPerZeptosecond % ZeptosecondsPerAttosecond);
 
         /// <summary>
@@ -327,8 +342,22 @@ namespace Tavenem.Time
         /// <param name="aeonSequence">The number of aeons, expressed as a list of significant
         /// digits in ascending order, starting with the value of the 6th significant digit
         /// (1e6).</param>
-        /// <param name="years">The number of astronomical years.</param>
-        /// <param name="days">The number of days.</param>
+        /// <param name="years">
+        /// <para>
+        /// The number of astronomical years.
+        /// </para>
+        /// <para>
+        /// An astronomical (Julian) year is exactly 31557600 seconds long (365.25 * 86400).
+        /// </para>
+        /// </param>
+        /// <param name="days">
+        /// <para>
+        /// The number of days.
+        /// </para>
+        /// <para>
+        /// An SI day is exactly 86400 seconds long.
+        /// </para>
+        /// </param>
         /// <param name="hours">The number of hours.</param>
         /// <param name="minutes">The number of minutes.</param>
         /// <param name="seconds">The number of seconds.</param>
@@ -527,7 +556,45 @@ namespace Tavenem.Time
             }
         }
 
-        private Duration(
+        /// <summary>
+        /// Initializes a new instance of <see cref="Duration"/>
+        /// </summary>
+        /// <param name="isNegative">
+        /// Whether the instance will represent a negative duration.
+        /// </param>
+        /// <param name="isPerpetual">
+        /// Indicates that this <see cref="Duration"/> will represent an infinite amount of time
+        /// (positive or negative).
+        /// </param>
+        /// <param name="planckTime">
+        /// <para>
+        /// The amount of Planck time.
+        /// </para>
+        /// <para>
+        /// Cannot be negative; only the <see cref="Duration"/> as a whole can be negative. Values
+        /// less than zero will be converted to 0.
+        /// </para>
+        /// </param>
+        /// <param name="totalYoctoseconds">
+        /// The number of yoctoseconds beyond <paramref name="totalNanoseconds"/>.
+        /// </param>
+        /// <param name="totalNanoseconds">
+        /// The number of nanoseconds beyond <paramref name="years"/>.
+        /// </param>
+        /// <param name="years">
+        /// <para>
+        /// The number of astronomical years beyond <paramref name="aeonSequence"/>.
+        /// </para>
+        /// <para>
+        /// An astronomical (Julian) year is exactly 31557600 seconds long (365.25 * 86400).
+        /// </para>
+        /// </param>
+        /// <param name="aeonSequence">
+        /// The number of aeons, expressed as a list of significant digits in ascending order,
+        /// starting with the value of the 6th significant digit (1e6).
+        /// </param>
+        [JsonConstructor]
+        public Duration(
             bool isNegative,
             bool isPerpetual,
             decimal planckTime,
@@ -538,15 +605,27 @@ namespace Tavenem.Time
         {
             IsNegative = isNegative;
             IsPerpetual = isPerpetual;
-            PlanckTime = planckTime;
-            TotalYoctoseconds = totalYoctoseconds;
-            TotalNanoseconds = totalNanoseconds;
-            Years = years;
-            AeonSequence = aeonSequence is null
-                || aeonSequence.Count == 0
-                || (aeonSequence.Count == 1 && aeonSequence[0] == 0)
-                ? null
-                : aeonSequence.ToList();
+            if (isPerpetual)
+            {
+                AeonSequence = null;
+                PlanckTime = 0;
+                TotalNanoseconds = 0;
+                TotalYoctoseconds = 0;
+                Years = 0;
+            }
+            else
+            {
+                AeonSequence = aeonSequence is null
+                    || aeonSequence.Count == 0
+                    || (aeonSequence.Count == 1
+                    && aeonSequence[0] == 0)
+                    ? null
+                    : aeonSequence;
+                PlanckTime = Math.Max(0, planckTime);
+                TotalNanoseconds = totalNanoseconds;
+                TotalYoctoseconds = totalYoctoseconds;
+                Years = years;
+            }
         }
 
         private Duration(SerializationInfo info, StreamingContext context) : this(
@@ -587,7 +666,7 @@ namespace Tavenem.Time
             && PlanckTime == other.PlanckTime
             && (AeonSequence is null
             ? other.AeonSequence is null
-            : !(other.AeonSequence is null) && AeonSequence.SequenceEqual(other.AeonSequence));
+            : other.AeonSequence is not null && AeonSequence.SequenceEqual(other.AeonSequence));
 
         /// <summary>
         /// Indicates whether this <see cref="Duration"/> instance and a <see

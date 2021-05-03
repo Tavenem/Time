@@ -21,7 +21,6 @@ namespace Tavenem.Time
     /// </summary>
     [Serializable]
     [DataContract]
-    [JsonConverter(typeof(RelativeDurationConverter))]
     public partial struct RelativeDuration :
         IEquatable<RelativeDuration>,
         IEquatable<Duration>,
@@ -63,11 +62,13 @@ namespace Tavenem.Time
         /// <summary>
         /// Indicates that this value represents an infinite amount of time.
         /// </summary>
+        [JsonIgnore]
         public bool IsPerpetual => Relativity == RelativeDurationType.Absolute && Duration.IsPerpetual;
 
         /// <summary>
         /// Whether this value represents zero time.
         /// </summary>
+        [JsonIgnore]
         public bool IsZero => Relativity == RelativeDurationType.Absolute ? Duration.IsZero : Proportion == 0;
 
         /// <summary>
@@ -94,41 +95,116 @@ namespace Tavenem.Time
         /// Initializes a new instance of <see cref="RelativeDuration"/> with the given absolute
         /// <see cref="Duration"/>.
         /// </summary>
-        /// <param name="absoluteDuration">A <see cref="Duration"/> to set as the absolute
+        /// <param name="duration">A <see cref="Duration"/> to set as the absolute
         /// value of this instance.</param>
-        public RelativeDuration(Duration absoluteDuration)
+        public RelativeDuration(Duration duration)
         {
-            Duration = absoluteDuration;
+            Duration = duration;
             Proportion = 0;
             Relativity = RelativeDurationType.Absolute;
         }
 
-        private RelativeDuration(HugeNumber proportion, RelativeDurationType timeType)
+        /// <summary>
+        /// Initializes a new instance of <see cref="RelativeDuration"/> with the given absolute
+        /// <see cref="Duration"/>.
+        /// </summary>
+        /// <param name="proportion">
+        /// The proportion of a local day or year represented by this instance. Will be 0 if
+        /// <paramref name="relativity"/> is <see cref="RelativeDurationType.Absolute"/>.
+        /// </param>
+        /// <param name="relativity">
+        /// <para>
+        /// Indicates the type of time measurement used by this instance: absolute, relative to a
+        /// local day, or relative to a local year.
+        /// </para>
+        /// <para>
+        /// Determines whether <see cref="Duration"/> or <see cref="Proportion"/> is used to
+        /// determine the duration represented by this instance.
+        /// </para>
+        /// </param>
+        public RelativeDuration(HugeNumber proportion, RelativeDurationType relativity)
         {
             Duration = Duration.Zero;
             Proportion = (double)HugeNumber.Max(0, proportion);
-            Relativity = timeType;
+            Relativity = relativity;
         }
 
-        private RelativeDuration(decimal proportion, RelativeDurationType timeType)
+        /// <summary>
+        /// Initializes a new instance of <see cref="RelativeDuration"/> with the given absolute
+        /// <see cref="Duration"/>.
+        /// </summary>
+        /// <param name="proportion">
+        /// The proportion of a local day or year represented by this instance. Will be 0 if
+        /// <paramref name="relativity"/> is <see cref="RelativeDurationType.Absolute"/>.
+        /// </param>
+        /// <param name="relativity">
+        /// <para>
+        /// Indicates the type of time measurement used by this instance: absolute, relative to a
+        /// local day, or relative to a local year.
+        /// </para>
+        /// <para>
+        /// Determines whether <see cref="Duration"/> or <see cref="Proportion"/> is used to
+        /// determine the duration represented by this instance.
+        /// </para>
+        /// </param>
+        public RelativeDuration(decimal proportion, RelativeDurationType relativity)
         {
             Duration = Duration.Zero;
             Proportion = (double)Math.Max(0, proportion);
-            Relativity = timeType;
+            Relativity = relativity;
         }
 
-        private RelativeDuration(double proportion, RelativeDurationType timeType)
+        /// <summary>
+        /// Initializes a new instance of <see cref="RelativeDuration"/> with the given absolute
+        /// <see cref="Duration"/>.
+        /// </summary>
+        /// <param name="proportion">
+        /// The proportion of a local day or year represented by this instance. Will be 0 if
+        /// <paramref name="relativity"/> is <see cref="RelativeDurationType.Absolute"/>.
+        /// </param>
+        /// <param name="relativity">
+        /// <para>
+        /// Indicates the type of time measurement used by this instance: absolute, relative to a
+        /// local day, or relative to a local year.
+        /// </para>
+        /// <para>
+        /// Determines whether <see cref="Duration"/> or <see cref="Proportion"/> is used to
+        /// determine the duration represented by this instance.
+        /// </para>
+        /// </param>
+        public RelativeDuration(double proportion, RelativeDurationType relativity)
         {
             Duration = Duration.Zero;
             Proportion = Math.Max(0, proportion);
-            Relativity = timeType;
+            Relativity = relativity;
         }
 
-        private RelativeDuration(Duration absoluteDuration, double proportion, RelativeDurationType timeType)
+        /// <summary>
+        /// Initializes a new instance of <see cref="RelativeDuration"/> with the given absolute
+        /// <see cref="Duration"/>.
+        /// </summary>
+        /// <param name="duration">A <see cref="Duration"/> to set as the absolute
+        /// value of this instance.</param>
+        /// <param name="proportion">
+        /// The proportion of a local day or year represented by this instance. Will be 0 if
+        /// <paramref name="relativity"/> is <see cref="RelativeDurationType.Absolute"/>.
+        /// </param>
+        /// <param name="relativity">
+        /// <para>
+        /// Indicates the type of time measurement used by this instance: absolute, relative to a
+        /// local day, or relative to a local year.
+        /// </para>
+        /// <para>
+        /// Determines whether <see cref="Duration"/> or <see cref="Proportion"/> is used to
+        /// determine the duration represented by this instance.
+        /// </para>
+        /// </param>
+        [JsonConstructor]
+        public RelativeDuration(Duration duration, double proportion, RelativeDurationType relativity)
         {
-            Duration = absoluteDuration;
-            Proportion = proportion;
-            Relativity = timeType;
+            Duration = relativity != RelativeDurationType.Absolute ? Duration.Zero : duration;
+            Proportion = relativity == RelativeDurationType.Absolute ? 0 : Math.Max(0, proportion);
+            Relativity = relativity;
         }
 
         private RelativeDuration(SerializationInfo info, StreamingContext context) : this(

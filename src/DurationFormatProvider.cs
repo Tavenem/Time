@@ -424,87 +424,48 @@ namespace Tavenem.Time
         {
             if (duration.AeonSequence is null
                 || duration.AeonSequence.Count == 0
-                || (duration.AeonSequence.Count == 1 && duration.AeonSequence[0] == 0))
+                || (duration.AeonSequence.Count == 1
+                && duration.AeonSequence[0] == 0))
             {
                 return duration.Years.ToString($"G{n}");
             }
 
             var sb = new StringBuilder();
 
-            var index = -6;
-
-            var exp = (uint)duration.AeonSequence.Count + 5;
+            var exp = (uint)((duration.AeonSequence.Count - 1) * 18)
+                + (duration.AeonSequence[duration.AeonSequence.Count - 1] == 0
+                    ? 1
+                    : (int)Math.Log10(duration.AeonSequence[duration.AeonSequence.Count - 1]) + 1)
+                + 5;
             var sci = exp >= n;
 
-            var groupIndex = 0;
-            var groupCount = 0;
-
             if (sci)
             {
-                index = duration.AeonSequence.Count - n;
-            }
-
-            // years
-            while (index < 0)
-            {
-                var lim = 0;
-                if (!sci)
+                for (var i = duration.AeonSequence.Count - 1; i >= 0; i--)
                 {
-                    lim = nfi.NumberGroupSizes[groupIndex];
-                    if (lim != 0 && groupCount == lim)
+                    sb.Append(duration.AeonSequence[i]);
+                    if (sb.Length > n)
                     {
-                        sb.Insert(0, nfi.NumberGroupSeparator);
-                        groupCount = 0;
-                        if (groupIndex < nfi.NumberGroupSizes.Length - 1)
-                        {
-                            groupIndex++;
-                        }
+                        break;
                     }
                 }
-                var digit = (byte)(duration.Years / Math.Pow(10, index) % 10);
-                sb.Insert(0, digit);
-                if (lim != 0)
+                if (sb.Length < n)
                 {
-                    groupCount++;
+                    sb.Append(duration.Years.ToString("D5"));
                 }
-                index++;
-            }
-
-            while (index < duration.AeonSequence.Count)
-            {
-                var lim = 0;
-                if (sci)
-                {
-                    if (index == duration.AeonSequence.Count - 1)
-                    {
-                        sb.Insert(0, nfi.NumberDecimalSeparator);
-                    }
-                }
-                else
-                {
-                    lim = nfi.NumberGroupSizes[groupIndex];
-                    if (lim != 0 && groupCount == lim)
-                    {
-                        sb.Insert(0, nfi.NumberGroupSeparator);
-                        groupCount = 0;
-                        if (groupIndex < nfi.NumberGroupSizes.Length - 1)
-                        {
-                            groupIndex++;
-                        }
-                    }
-                }
-                sb.Insert(0, duration.AeonSequence[index]);
-                if (lim != 0)
-                {
-                    groupCount++;
-                }
-                index++;
-            }
-
-            if (sci)
-            {
+                sb.Length = n;
+                sb.Insert(0, nfi.NumberDecimalSeparator);
+                sb.Insert(0, '0');
                 sb.Append("E+");
                 sb.Append(exp.ToString("D2"));
+            }
+            else
+            {
+                for (var i = duration.AeonSequence.Count - 1; i >= 0; i--)
+                {
+                    sb.Append(duration.AeonSequence[i]);
+                }
+                sb.Append(duration.Years.ToString("D5"));
             }
 
             return sb.ToString();

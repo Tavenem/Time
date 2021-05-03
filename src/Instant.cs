@@ -50,6 +50,20 @@ namespace Tavenem.Time
         public int Epoch { get; }
 
         /// <summary>
+        /// Indicates that this <see cref="Instant"/> represents an infinite amount of
+        /// time (positive or negative).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonIgnore]
+        public bool IsPerpetual => Offset.IsPerpetual;
+
+        /// <summary>
+        /// Indicates that this <see cref="Instant"/> represents an infinite amount of
+        /// time in the positive direction.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonIgnore]
+        public bool IsPositiveInfinity => Offset.IsPositiveInfinity;
+
+        /// <summary>
         /// <para>
         /// Indicates whether this instant represents the beginning of time.
         /// </para>
