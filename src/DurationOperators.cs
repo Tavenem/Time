@@ -34,26 +34,114 @@ namespace Tavenem.Time
         public static Duration operator +(Duration first, Duration second)
             => first.Add(second);
 
+        public static Duration operator +(Duration? first, Duration second)
+            => (first ?? Zero).Add(second);
+
+        public static Duration operator +(Duration first, Duration? second)
+            => first.Add(second ?? Zero);
+
+        public static Duration? operator +(Duration? first, Duration? second)
+            => first.HasValue || second.HasValue
+            ? (first ?? Zero).Add(second ?? Zero)
+            : null;
+
         public static Duration operator +(Duration first, HugeNumber second)
             => first.Add(second);
+
+        public static Duration operator +(Duration? first, HugeNumber second)
+            => (first ?? Zero).Add(second);
+
+        public static Duration operator +(Duration first, HugeNumber? second)
+            => first.Add(second ?? HugeNumber.Zero);
+
+        public static Duration? operator +(Duration? first, HugeNumber? second)
+            => first.HasValue || second.HasValue
+            ? (first ?? Zero).Add(second ?? HugeNumber.Zero)
+            : null;
 
         public static Duration operator +(Duration first, decimal second)
             => first.Add(second);
 
+        public static Duration operator +(Duration? first, decimal second)
+            => (first ?? Zero).Add(second);
+
+        public static Duration operator +(Duration first, decimal? second)
+            => first.Add(second ?? 0);
+
+        public static Duration? operator +(Duration? first, decimal? second)
+            => first.HasValue || second.HasValue
+            ? (first ?? Zero).Add(second ?? 0)
+            : null;
+
         public static Duration operator +(Duration first, double second)
             => first.Add(second);
+
+        public static Duration operator +(Duration? first, double second)
+            => (first ?? Zero).Add(second);
+
+        public static Duration operator +(Duration first, double? second)
+            => first.Add(second ?? 0);
+
+        public static Duration? operator +(Duration? first, double? second)
+            => first.HasValue || second.HasValue
+            ? (first ?? Zero).Add(second ?? 0)
+            : null;
 
         public static Duration operator -(Duration first, Duration second)
             => first.Subtract(second);
 
+        public static Duration operator -(Duration? first, Duration second)
+            => (first ?? Zero).Subtract(second);
+
+        public static Duration operator -(Duration first, Duration? second)
+            => first.Subtract(second ?? Zero);
+
+        public static Duration? operator -(Duration? first, Duration? second)
+            => first.HasValue || second.HasValue
+            ? (first ?? Zero).Subtract(second ?? Zero)
+            : null;
+
         public static Duration operator -(Duration first, HugeNumber second)
             => first.Subtract(second);
+
+        public static Duration operator -(Duration? first, HugeNumber second)
+            => (first ?? Zero).Subtract(second);
+
+        public static Duration operator -(Duration first, HugeNumber? second)
+            => first.Subtract(second ?? HugeNumber.Zero);
+
+        public static Duration? operator -(Duration? first, HugeNumber? second)
+            => first.HasValue || second.HasValue
+            ? (first ?? Zero).Subtract(second ?? HugeNumber.Zero)
+            : null;
 
         public static Duration operator -(Duration first, decimal second)
             => first.Subtract(second);
 
+        public static Duration operator -(Duration? first, decimal second)
+            => (first ?? Zero).Subtract(second);
+
+        public static Duration operator -(Duration first, decimal? second)
+            => first.Subtract(second ?? 0);
+
+        public static Duration? operator -(Duration? first, decimal? second)
+            => first.HasValue || second.HasValue
+            ? (first ?? Zero).Subtract(second ?? 0)
+            : null;
+
         public static Duration operator -(Duration first, double second)
             => first.Subtract(second);
+
+        public static Duration operator -(Duration? first, double second)
+            => (first ?? Zero).Subtract(second);
+
+        public static Duration operator -(Duration first, double? second)
+            => first.Subtract(second ?? 0);
+
+        public static Duration? operator -(Duration? first, double? second)
+            => first.HasValue || second.HasValue
+            ? (first ?? Zero).Subtract(second ?? 0)
+            : null;
 
         public static Duration operator *(Duration value, HugeNumber factor)
             => value.Multiply(factor);

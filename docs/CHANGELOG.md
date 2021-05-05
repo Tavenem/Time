@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.0
+### Added
+- Add addition and subtraction operator overloads for nullable values
+
 ## 1.2.0
 ### Added
 - Add `GetDifferenceFromNow` to `CosmicTime`
