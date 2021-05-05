@@ -559,10 +559,11 @@ namespace Tavenem.Time
         /// </summary>
         /// <param name="first">The first <see cref="Instant"/>.</param>
         /// <param name="second">The second <see cref="Instant"/>.</param>
-        /// <returns>The result of subtracting <paramref name="first"/> from <paramref
-        /// name="second"/>; or <see cref="Duration.NegativeInfinity"/> or <see
-        /// cref="Duration.PositiveInfinity"/> if the result cannot be represented as a finite <see
-        /// cref="Duration"/>.</returns>
+        /// <returns>
+        /// The result of subtracting <paramref name="first"/> from <paramref name="second"/>; or
+        /// <see cref="Duration.NegativeInfinity"/> or <see cref="Duration.PositiveInfinity"/> if
+        /// the result cannot be represented as a finite <see cref="Duration"/>.
+        /// </returns>
         public Duration GetDifference(Instant first, Instant second)
         {
             var epoch = first.Epoch;
@@ -609,6 +610,18 @@ namespace Tavenem.Time
                 return second.Offset - duration;
             }
         }
+
+        /// <summary>
+        /// Calculates the difference between the given <see cref="Instant"/> instance and <see
+        /// cref="Now"/>.
+        /// </summary>
+        /// <param name="instant">The first <see cref="Instant"/>.</param>
+        /// <returns>
+        /// The result of subtracting <see cref="Now"/> from <paramref name="instant"/>; or <see
+        /// cref="Duration.NegativeInfinity"/> or <see cref="Duration.PositiveInfinity"/> if the
+        /// result cannot be represented as a finite <see cref="Duration"/>.
+        /// </returns>
+        public Duration GetDifferenceFromNow(Instant instant) => GetDifference(Now, instant);
 
         /// <summary>
         /// Gets the index of the epoch indicated by the given duration from the beginning of the
