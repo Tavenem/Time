@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <LangVersion>Latest</LangVersion>
-    <Nullable>enable</Nullable>
+	<TargetFramework>net6.0</TargetFramework>
+	<LangVersion>preview</LangVersion>
+	<EnablePreviewFeatures>true</EnablePreviewFeatures>
+	<Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
@@ -34,7 +35,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Tavenem.Mathematics" Version="1.0.0" />
+    <PackageReference Include="Tavenem.Mathematics" Version="2.0.0-preview.6" />
   </ItemGroup>
 
 </Project>

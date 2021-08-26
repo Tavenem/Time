@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.0-preview.1
+### Changed
+- Update to .NET 6 preview
+- Update to C# 10 preview
+- Remove dependency on `HugeNumber` and use numeric generics
+- Use BigInteger for aeons and Planck time
+- Changed to readonly struct
+### Removed
+- Support for non-JSON serialization
+- Individual `AddX` and `SubtractX` methods for time units; the `Add(Duration)` method can be used instead after a static `FromX` method
+
 ## 1.3.0
 ### Added
 - Add addition and subtraction operator overloads for nullable values
