@@ -789,11 +789,10 @@ public partial struct Duration
         return true;
     }
 
-    private static bool TryParseFormat(in ReadOnlySpan<char> input, in ReadOnlySpan<char> format, NumberFormatInfo nfi, out Duration result)
+    private static bool TryParseFormat(ReadOnlySpan<char> input, in ReadOnlySpan<char> format, NumberFormatInfo nfi, out Duration result)
     {
         result = Zero;
 
-        var isNegative = false;
         BigInteger? aeons = null;
         var yearValue = 0u;
         var nanosecondValue = 0ul;
@@ -811,6 +810,13 @@ public partial struct Duration
         var unitCount = 0;
 
         var units = new Dictionary<int, ParseUnitInfo>();
+
+        var isNegative = false;
+        if (input.StartsWith(nfi.NegativeSign))
+        {
+            isNegative = true;
+            input = input[nfi.NegativeSign.Length..];
+        }
 
         void CompleteUnit()
         {
@@ -1019,14 +1025,6 @@ public partial struct Duration
             if (!TryGetDigitSlice(input, index, unitIndex, unit.Seperator, unit.Length, out var slice, out var length))
             {
                 return false;
-            }
-            if (index == 0 && slice.Equals(nfi.NegativeSign, StringComparison.Ordinal))
-            {
-                isNegative = true;
-                unitIndex++;
-                index += length;
-                index += unit.SeperatorLength;
-                continue;
             }
             var ulongValue = 0UL;
             if (unit.Unit != FormatUnit.Aeon

@@ -20,6 +20,7 @@ namespace Tavenem.Time;
 /// Also able to represent an infinite (perpetual) duration.
 /// </para>
 /// </summary>
+[JsonConverter(typeof(DurationConverter))]
 public readonly partial struct Duration :
     IAdditiveIdentity<Duration, Duration>,
     IAdditionOperators<Duration, Duration, Duration>,

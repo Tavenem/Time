@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0-preview.2
+### Changed
+- JSON serialization now uses `ToString` round-trip format
+
 ## 2.0.0-preview.1
 ### Changed
 - Update to .NET 6 preview

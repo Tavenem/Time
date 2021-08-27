@@ -279,6 +279,11 @@ public class DurationFormatProvider : IFormatProvider, ICustomFormatter
 
         var sb = new StringBuilder();
 
+        if (duration.IsNegative)
+        {
+            sb.Append(nfi.NegativeSign);
+        }
+
         var broken = false;
         var doubleQuote = false;
         var processing = FormatUnit.None;
@@ -323,11 +328,11 @@ public class DurationFormatProvider : IFormatProvider, ICustomFormatter
                     if (duration.Aeons.HasValue)
                     {
                         sb.Append(duration.Aeons.Value)
-                            .Append(duration.Years);
+                            .Append(yearValue.ToString("D9"));
                     }
                     else
                     {
-                        sb.Append(duration.Years);
+                        sb.Append(yearValue.ToString($"D{unitCount}"));
                     }
                     yearValue = 0;
                     break;
@@ -521,15 +526,22 @@ public class DurationFormatProvider : IFormatProvider, ICustomFormatter
     {
         if (duration.IsPerpetual)
         {
-            return new StringBuilder(nfi.PositiveInfinitySymbol);
+            return new StringBuilder(duration.IsNegative
+                ? nfi.NegativeInfinitySymbol
+                : nfi.PositiveInfinitySymbol);
         }
 
         var sb = new StringBuilder();
 
+        if (duration.IsNegative)
+        {
+            sb.Append(nfi.NegativeSign);
+        }
+
         if (duration.Aeons.HasValue)
         {
             sb.Append(duration.Aeons.Value)
-                .Append(duration.Years)
+                .Append(duration.Years.ToString("D9"))
                 .Append(" y");
         }
         else if (duration.Years > 0)

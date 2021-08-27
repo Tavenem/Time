@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Tavenem.Time.Converters;
 
 namespace Tavenem.Time;
 
@@ -16,6 +17,7 @@ namespace Tavenem.Time;
 /// Also able to represent an infinite (perpetual) duration.
 /// </para>
 /// </summary>
+[JsonConverter(typeof(RelativeDurationConverter))]
 public readonly partial struct RelativeDuration :
     IDivisionOperators<RelativeDuration, double, RelativeDuration>,
     IEqualityOperators<RelativeDuration, RelativeDuration>,

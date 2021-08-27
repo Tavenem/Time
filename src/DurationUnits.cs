@@ -276,9 +276,9 @@ public partial struct Duration
     public const int SecondsPerYear = 31557600;
 
     /// <summary>
-    /// The number of years in an astronomical aeon (1000000 years).
+    /// The number of years in an astronomical aeon (10e9 years).
     /// </summary>
-    public const int YearsPerAeon = 1000000;
+    public const int YearsPerAeon = 1000000000;
 
     /// <summary>
     /// The number of yoctoseconds in an attosecond.
