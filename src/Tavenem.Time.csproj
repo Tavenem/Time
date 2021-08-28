@@ -35,7 +35,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Tavenem.Mathematics" Version="2.0.0-preview.6" />
+    <PackageReference Include="Tavenem.Mathematics" Version="2.0.0-preview.11" />
   </ItemGroup>
 
 </Project>

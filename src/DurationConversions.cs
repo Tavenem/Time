@@ -786,7 +786,7 @@ public partial struct Duration
                 false,
                 null,
                 0,
-                (uint)value,
+                (ulong)value,
                 0,
                 null);
         }
@@ -1618,7 +1618,7 @@ public partial struct Duration
 
         if (value > 0)
         {
-            var ys = (uint)Math.Floor(value);
+            var ys = (ulong)Math.Floor(value);
             value -= ys;
 
             d += new Duration(
@@ -1675,7 +1675,7 @@ public partial struct Duration
 
         if (value > 0)
         {
-            var ys = (uint)Math.Floor(value);
+            var ys = (ulong)Math.Floor(value);
             value -= ys;
 
             d += new Duration(
@@ -1722,7 +1722,7 @@ public partial struct Duration
                 false,
                 false,
                 null,
-                (uint)value,
+                (ulong)value,
                 0,
                 0,
                 null);
@@ -1763,7 +1763,7 @@ public partial struct Duration
                 false,
                 false,
                 null,
-                value.Create<T, uint>(),
+                value.Create<T, ulong>(),
                 0,
                 0,
                 null);
@@ -1822,7 +1822,7 @@ public partial struct Duration
                 false,
                 false,
                 (BigInteger)(value.Create<T, decimal>() * PlanckTimePerYoctosecondDecimal),
-                ys.Create<T, uint>(),
+                ys.Create<T, ulong>(),
                 0,
                 0,
                 null);
