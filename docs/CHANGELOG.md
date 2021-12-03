@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0
+### Updated
+- Update to release packages
+
 ## 2.0.0-preview.3
 ### Fixed
 - Conversions
