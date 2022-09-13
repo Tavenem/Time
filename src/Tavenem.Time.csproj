@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <TargetFramework>net6.0</TargetFramework>
+	  <TargetFramework>net7.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <EnablePreviewFeatures>true</EnablePreviewFeatures>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
@@ -16,7 +16,8 @@
       Provides classes capable of accurately representing extremely large and small time intervals,
       suitable for time scales such as the age of a universe, with precision down to Planck time.
     </Description>
-    <Copyright>Copyright © 2019-2021 Wil Stead</Copyright>
+    <Copyright>Copyright © Wil Stead</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Tavenem/Time</PackageProjectUrl>
     <PackageIcon>tavenem_128.png</PackageIcon>
@@ -27,6 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
     <None Include="tavenem_128.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
@@ -35,7 +37,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Tavenem.Mathematics" Version="2.0.0" />
+    <PackageReference Include="Tavenem.Mathematics" Version="2.1.0-preview.1" />
   </ItemGroup>
 
 </Project>

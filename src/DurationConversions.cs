@@ -142,7 +142,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromAeonsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
     {
@@ -178,7 +178,7 @@ public partial struct Duration
             BigInteger.Parse(aeons.ToString("F0", System.Globalization.CultureInfo.InvariantCulture)));
         if (value > T.Zero)
         {
-            d += FromYearsFloatingPoint(value / T.Create(YearsPerAeon));
+            d += FromYearsFloatingPoint(value / T.CreateChecked(YearsPerAeon));
         }
         if (isNegative)
         {
@@ -232,10 +232,10 @@ public partial struct Duration
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromAttosecondsInteger<T>(T value) where T : INumber<T>
     {
-        var attosecondsPerNanosecond = T.Create(AttosecondsPerNanosecond);
+        var attosecondsPerNanosecond = T.CreateChecked(AttosecondsPerNanosecond);
         var remainder = value % attosecondsPerNanosecond;
         var d = FromNanosecondsInteger(value / attosecondsPerNanosecond);
-        return d + FromYoctosecondsInteger(remainder * T.Create(YoctosecondsPerAttosecond));
+        return d + FromYoctosecondsInteger(remainder * T.CreateChecked(YoctosecondsPerAttosecond));
     }
 
     /// <summary>
@@ -246,10 +246,10 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromAttosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
-        => FromNanosecondsFloatingPoint(value / T.Create(AttosecondsPerNanosecond));
+        => FromNanosecondsFloatingPoint(value / T.CreateChecked(AttosecondsPerNanosecond));
 
     /// <summary>
     /// Converts the given <see cref="DateTime"/> value to a <see cref="Duration"/> value.
@@ -359,7 +359,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromDaysInteger<T>(T value) where T : INumber<T>
-        => FromDays(value.Create<T, decimal>());
+        => FromDays(value.CreateChecked<T, decimal>());
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -369,10 +369,10 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromDaysFloatingPoint<T>(T value) where T : IFloatingPoint<T>
-        => FromNanosecondsFloatingPoint(value * T.Create(NanosecondsPerDay));
+        => FromNanosecondsFloatingPoint(value * T.CreateChecked(NanosecondsPerDay));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -419,10 +419,10 @@ public partial struct Duration
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromFemtosecondsInteger<T>(T value) where T : INumber<T>
     {
-        var femtosecondsPerNanosecond = T.Create(FemtosecondsPerNanosecond);
+        var femtosecondsPerNanosecond = T.CreateChecked(FemtosecondsPerNanosecond);
         var remainder = value % femtosecondsPerNanosecond;
         var d = FromNanosecondsInteger(value / femtosecondsPerNanosecond);
-        return d + FromYoctosecondsInteger(remainder * T.Create(YoctosecondsPerFemtosecond));
+        return d + FromYoctosecondsInteger(remainder * T.CreateChecked(YoctosecondsPerFemtosecond));
     }
 
     /// <summary>
@@ -433,10 +433,10 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromFemtosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
-        => FromNanosecondsFloatingPoint(value / T.Create(FemtosecondsPerNanosecond));
+        => FromNanosecondsFloatingPoint(value / T.CreateChecked(FemtosecondsPerNanosecond));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -479,7 +479,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromHoursInteger<T>(T value) where T : INumber<T>
-        => FromHours(value.Create<T, decimal>());
+        => FromHours(value.CreateChecked<T, decimal>());
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -489,10 +489,10 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromHoursFloatingPoint<T>(T value) where T : IFloatingPoint<T>
-        => FromNanosecondsFloatingPoint(value * T.Create(NanosecondsPerHour));
+        => FromNanosecondsFloatingPoint(value * T.CreateChecked(NanosecondsPerHour));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -535,7 +535,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromMicrosecondsInteger<T>(T value) where T : INumber<T>
-        => FromMicroseconds(value.Create<T, decimal>());
+        => FromMicroseconds(value.CreateChecked<T, decimal>());
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -545,10 +545,10 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromMicrosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
-        => FromNanosecondsFloatingPoint(value * T.Create(NanosecondsPerMicrosecond));
+        => FromNanosecondsFloatingPoint(value * T.CreateChecked(NanosecondsPerMicrosecond));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -591,7 +591,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromMillisecondsInteger<T>(T value) where T : INumber<T>
-        => FromMilliseconds(value.Create<T, decimal>());
+        => FromMilliseconds(value.CreateChecked<T, decimal>());
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -601,10 +601,10 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromMillisecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
-        => FromNanosecondsFloatingPoint(value * T.Create(NanosecondsPerMillisecond));
+        => FromNanosecondsFloatingPoint(value * T.CreateChecked(NanosecondsPerMillisecond));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -647,7 +647,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromMinutesInteger<T>(T value) where T : INumber<T>
-        => FromMinutes(value.Create<T, decimal>());
+        => FromMinutes(value.CreateChecked<T, decimal>());
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -657,10 +657,10 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromMinutesFloatingPoint<T>(T value) where T : IFloatingPoint<T>
-        => FromNanosecondsFloatingPoint(value * T.Create(NanosecondsPerMinute));
+        => FromNanosecondsFloatingPoint(value * T.CreateChecked(NanosecondsPerMinute));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -814,7 +814,7 @@ public partial struct Duration
         var isNegative = value < T.Zero;
         value = T.Abs(value);
 
-        var nanosecondsPerYear = T.Create(NanosecondsPerYear);
+        var nanosecondsPerYear = T.CreateChecked(NanosecondsPerYear);
         var years = value / nanosecondsPerYear;
         value -= years * nanosecondsPerYear;
 
@@ -827,7 +827,7 @@ public partial struct Duration
                 false,
                 null,
                 0,
-                value.Create<T, ulong>(),
+                value.CreateChecked<T, ulong>(),
                 0,
                 null);
         }
@@ -847,7 +847,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromNanosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
     {
@@ -870,7 +870,7 @@ public partial struct Duration
         var isNegative = value < T.Zero;
         value = T.Abs(value);
 
-        var nanosecondsPerYear = T.Create(NanosecondsPerYear);
+        var nanosecondsPerYear = T.CreateChecked(NanosecondsPerYear);
         var years = T.Floor(value / nanosecondsPerYear);
         value -= years * nanosecondsPerYear;
 
@@ -886,13 +886,13 @@ public partial struct Duration
                 false,
                 null,
                 0,
-                ns.Create<T, ulong>(),
+                ns.CreateChecked<T, ulong>(),
                 0,
                 null);
 
             if (value > T.Zero)
             {
-                d += FromYoctosecondsFloatingPoint(value * T.Create(YoctosecondsPerNanosecond));
+                d += FromYoctosecondsFloatingPoint(value * T.CreateChecked(YoctosecondsPerNanosecond));
             }
         }
 
@@ -948,10 +948,10 @@ public partial struct Duration
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromPicosecondsInteger<T>(T value) where T : INumber<T>
     {
-        var picosecondsPerNanosecond = T.Create(PicosecondsPerNanosecond);
+        var picosecondsPerNanosecond = T.CreateChecked(PicosecondsPerNanosecond);
         var remainder = value % picosecondsPerNanosecond;
         var d = FromNanosecondsInteger(value / picosecondsPerNanosecond);
-        return d + FromYoctosecondsInteger(remainder * T.Create(YoctosecondsPerPicosecond));
+        return d + FromYoctosecondsInteger(remainder * T.CreateChecked(YoctosecondsPerPicosecond));
     }
 
     /// <summary>
@@ -962,10 +962,10 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromPicosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
-        => FromNanosecondsFloatingPoint(value / T.Create(PicosecondsPerNanosecond));
+        => FromNanosecondsFloatingPoint(value / T.CreateChecked(PicosecondsPerNanosecond));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance based on the proportions of a local
@@ -1308,7 +1308,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromSecondsInteger<T>(T value) where T : INumber<T>
-        => FromSeconds(value.Create<T, decimal>());
+        => FromSeconds(value.CreateChecked<T, decimal>());
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -1318,10 +1318,10 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromSecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
-        => FromNanosecondsFloatingPoint(value * T.Create(NanosecondsPerSecond));
+        => FromNanosecondsFloatingPoint(value * T.CreateChecked(NanosecondsPerSecond));
 
     /// <summary>
     /// Converts the given <see cref="TimeSpan"/> value to a <see cref="Duration"/> value.
@@ -1506,7 +1506,7 @@ public partial struct Duration
         var isNegative = value < T.Zero;
         value = T.Abs(value);
 
-        var yearsPerAeon = T.Create(YearsPerAeon);
+        var yearsPerAeon = T.CreateChecked(YearsPerAeon);
         var aeons = value / yearsPerAeon;
         value -= aeons * yearsPerAeon;
 
@@ -1520,7 +1520,7 @@ public partial struct Duration
                 null,
                 0,
                 0,
-                value.Create<T, uint>(),
+                value.CreateChecked<T, uint>(),
                 null);
         }
 
@@ -1539,7 +1539,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromYearsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
     {
@@ -1562,7 +1562,7 @@ public partial struct Duration
         var isNegative = value < T.Zero;
         value = T.Abs(value);
 
-        var yearsPerAeon = T.Create(YearsPerAeon);
+        var yearsPerAeon = T.CreateChecked(YearsPerAeon);
         var aeons = T.Floor(value / yearsPerAeon);
         value -= aeons * yearsPerAeon;
 
@@ -1579,12 +1579,12 @@ public partial struct Duration
                 null,
                 0,
                 0,
-                years.Create<T, uint>(),
+                years.CreateChecked<T, uint>(),
                 null);
 
             if (value > T.Zero)
             {
-                d += FromSecondsFloatingPoint(value * T.Create(SecondsPerYear));
+                d += FromSecondsFloatingPoint(value * T.CreateChecked(SecondsPerYear));
             }
         }
 
@@ -1751,7 +1751,7 @@ public partial struct Duration
         var isNegative = value < T.Zero;
         value = T.Abs(value);
 
-        var yoctosecondsPerNanosecond = T.Create(YoctosecondsPerNanosecond);
+        var yoctosecondsPerNanosecond = T.CreateChecked(YoctosecondsPerNanosecond);
         var ns = value / yoctosecondsPerNanosecond;
         value -= ns * yoctosecondsPerNanosecond;
 
@@ -1763,7 +1763,7 @@ public partial struct Duration
                 false,
                 false,
                 null,
-                value.Create<T, ulong>(),
+                value.CreateChecked<T, ulong>(),
                 0,
                 0,
                 null);
@@ -1784,7 +1784,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromYoctosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
     {
@@ -1807,7 +1807,7 @@ public partial struct Duration
         var isNegative = value < T.Zero;
         value = T.Abs(value);
 
-        var yoctosecondsPerNanosecond = T.Create(YoctosecondsPerNanosecond);
+        var yoctosecondsPerNanosecond = T.CreateChecked(YoctosecondsPerNanosecond);
         var ns = T.Floor(value / yoctosecondsPerNanosecond);
         value -= ns * yoctosecondsPerNanosecond;
 
@@ -1821,8 +1821,8 @@ public partial struct Duration
             d += new Duration(
                 false,
                 false,
-                (BigInteger)(value.Create<T, decimal>() * PlanckTimePerYoctosecondDecimal),
-                ys.Create<T, ulong>(),
+                (BigInteger)(value.CreateChecked<T, decimal>() * PlanckTimePerYoctosecondDecimal),
+                ys.CreateChecked<T, ulong>(),
                 0,
                 0,
                 null);
@@ -1881,10 +1881,10 @@ public partial struct Duration
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromZeptosecondsInteger<T>(T value) where T : INumber<T>
     {
-        var zeptosecondsPerNanosecond = T.Create(ZeptosecondsPerNanosecond);
+        var zeptosecondsPerNanosecond = T.CreateChecked(ZeptosecondsPerNanosecond);
         var remainder = value % zeptosecondsPerNanosecond;
         var d = FromNanosecondsInteger(value / zeptosecondsPerNanosecond);
-        return d + FromYoctosecondsInteger(remainder * T.Create(YoctosecondsPerZeptosecond));
+        return d + FromYoctosecondsInteger(remainder * T.CreateChecked(YoctosecondsPerZeptosecond));
     }
 
     /// <summary>
@@ -1895,10 +1895,10 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static Duration FromZeptosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
-        => FromNanosecondsFloatingPoint(value / T.Create(ZeptosecondsPerNanosecond));
+        => FromNanosecondsFloatingPoint(value / T.CreateChecked(ZeptosecondsPerNanosecond));
 
     /// <summary>
     /// Converts this instance to a <see cref="DateTime"/> value.

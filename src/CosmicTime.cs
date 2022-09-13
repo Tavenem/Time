@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using System.Text.Json.Serialization;
-using Tavenem.Time.Converters;
 
 namespace Tavenem.Time;
 
@@ -10,34 +9,31 @@ namespace Tavenem.Time;
 /// <remarks>
 /// <para>
 /// Can accurately track ages up to the year roughly equal to 1e1816. That is greater than some
-/// estimates for the age of the universe when it reaches a theorized "heat death," which should
-/// be sufficient for most purposes.
+/// estimates for the age of the universe when it reaches a theorized "heat death," which should be
+/// sufficient for most purposes.
 /// </para>
 /// <para>
-/// Time is modeled as a series of epochs (<seealso cref="Epochs"/>), starting at the beginning
-/// of time in the universe. The current epoch is not included in the collection (since it has
-/// no fixed duration, as it is ongoing). Instead its name may be recorded for reference
-/// (<seealso cref="CurrentEpoch"/>). The present moment (<seealso cref="Now"/>) is an <see
-/// cref="Instant"/> offset from the start of the current epoch.
+/// Time is modeled as a series of epochs (<seealso cref="Epochs"/>), starting at the beginning of
+/// time in the universe. The current epoch is not included in the collection (since it has no fixed
+/// duration, as it is ongoing). Instead its name may be recorded for reference (<seealso
+/// cref="CurrentEpoch"/>). The present moment (<seealso cref="Now"/>) is an <see cref="Instant"/>
+/// offset from the start of the current epoch.
 /// </para>
 /// <para>
-/// The <see cref="Epochs"/> collection cannot be modified directly, but the <see
-/// cref="AddEpoch(Epoch, int)"/> and <see cref="RemoveEpoch(int)"/> methods can be used to add
-/// a new epoch or remove an unwanted one. Note that adding an epoch to the end of the
-/// colleciton does not affect the value of any existing <see cref="Instant"/> instances: they
-/// will still reference their original epoch, and should continue to refer to the same moment.
-/// Removing an epoch, inserting one anywhere but at the end of the collection, or even
-/// replacing an epoch with one that has a different duration, will all render incorrect any
-/// <see cref="Instant"/> instances which refer to that epoch or any that follow.
+/// Note that adding an epoch to the end of the colleciton does not affect the value of any existing
+/// <see cref="Instant"/> instances: they will still reference their original epoch, and should
+/// continue to refer to the same moment. Removing an epoch, inserting one anywhere but at the end
+/// of the collection, or even replacing an epoch with one that has a different duration, will all
+/// render incorrect any <see cref="Instant"/> instances which refer to that epoch or any that
+/// follow.
 /// </para>
 /// <para>
-/// The present time cannot be modified directly. Instead, the <see cref="AddTime(Duration)"/>
-/// and <see cref="SubtractTime(Duration)"/> methods can be used to modify the value of the
-/// present time. These methods guarantee that the present cannot become an illegal value
-/// (negative or infinite).
+/// The present time cannot be modified directly. Instead, the <see cref="AddTime(Duration)"/> and
+/// <see cref="SubtractTime(Duration)"/> methods can be used to modify the value of the present
+/// time. These methods guarantee that the present cannot become an illegal value (negative or
+/// infinite).
 /// </para>
 /// </remarks>
-[JsonConverter(typeof(CosmicTimeConverter))]
 public class CosmicTime
 {
     private const string DefaultCurrentEpoch = "Anthropocene Epoch";
@@ -54,7 +50,6 @@ public class CosmicTime
     /// </summary>
     public string? CurrentEpoch { get; set; } = DefaultCurrentEpoch;
 
-    private List<Epoch>? _epochs = Epoch.DefaultEpochs.ToList();
     /// <summary>
     /// <para>
     /// A collection of epochs which constitute the timeline of the universe.
@@ -64,7 +59,7 @@ public class CosmicTime
     /// the last epoch.
     /// </para>
     /// </summary>
-    public IReadOnlyList<Epoch> Epochs => (_epochs ?? new List<Epoch>()).AsReadOnly();
+    public List<Epoch> Epochs { get; set; } = Epoch.DefaultEpochs.ToList();
 
     /// <summary>
     /// <para>
@@ -75,6 +70,7 @@ public class CosmicTime
     /// cref="SubtractTime(Duration)"/>.
     /// </para>
     /// </summary>
+    [JsonInclude]
     public Instant Now { get; private set; }
 
     /// <summary>
@@ -91,7 +87,7 @@ public class CosmicTime
     public CosmicTime(Instant present, List<Epoch>? epochs = null, string? currentEpoch = null)
     {
         Now = present;
-        _epochs = epochs?.ToList();
+        Epochs = epochs ?? new();
         CurrentEpoch = currentEpoch;
     }
 
@@ -103,7 +99,7 @@ public class CosmicTime
     public CosmicTime(Duration present, params Epoch[] epochs)
     {
         Now = new(present);
-        _epochs = epochs.Length == 0 ? null : epochs.ToList();
+        Epochs = epochs.Length == 0 ? new() : epochs.ToList();
     }
 
     /// <summary>
@@ -116,7 +112,7 @@ public class CosmicTime
     {
         Now = new(present);
         CurrentEpoch = currentEpoch;
-        _epochs = epochs.Length == 0 ? null : epochs.ToList();
+        Epochs = epochs.Length == 0 ? new() : epochs.ToList();
     }
 
     /// <summary>
@@ -156,7 +152,7 @@ public class CosmicTime
         var ticks = dateTime.ToUniversalTime().Ticks;
         var years = (uint)(ticks / (TimeSpan.TicksPerSecond * Duration.SecondsPerDay));
         ticks %= TimeSpan.TicksPerSecond * Duration.SecondsPerDay;
-        return new CosmicTime(new(new Duration(years: years, nanoseconds: (ulong)ticks * Duration.NanosecondsPerTick)), epochs, currentEpoch);
+        return new CosmicTime(new(offset + new Duration(years: years, nanoseconds: (ulong)ticks * Duration.NanosecondsPerTick)), epochs, currentEpoch);
     }
 
     /// <summary>
@@ -194,7 +190,7 @@ public class CosmicTime
         var ticks = dateTime.ToUniversalTime().Ticks;
         var years = (uint)(ticks / (TimeSpan.TicksPerSecond * Duration.SecondsPerDay));
         ticks %= TimeSpan.TicksPerSecond * Duration.SecondsPerDay;
-        return new CosmicTime(new(new Duration(years: years, nanoseconds: (ulong)ticks * Duration.NanosecondsPerTick)), epochs, currentEpoch);
+        return new CosmicTime(new(offset + new Duration(years: years, nanoseconds: (ulong)ticks * Duration.NanosecondsPerTick)), epochs, currentEpoch);
     }
 
     /// <summary>
@@ -416,15 +412,6 @@ public class CosmicTime
     }
 
     /// <summary>
-    /// Adds the given <see cref="Epoch"/> to this timeline.
-    /// </summary>
-    /// <param name="epoch">The <see cref="Epoch"/> to add.</param>
-    /// <param name="index">The index at which to insert the <paramref name="epoch"/>. If
-    /// negative, the epoch will be added to the end of the collection.</param>
-    public void AddEpoch(Epoch epoch, int index = -1)
-        => (_epochs ??= new List<Epoch>()).Insert(index < 0 || index > Epochs.Count ? Epochs.Count : index, epoch);
-
-    /// <summary>
     /// <para>
     /// Advances time by the given duration.
     /// </para>
@@ -465,7 +452,7 @@ public class CosmicTime
                     && Epochs.Count == 0)
                     || t.Epoch >= Epochs.Count)
                 {
-                    t = new (Duration.Zero, Epochs.Count == 0 ? -1 : 0);
+                    t = new(Duration.Zero, Epochs.Count == 0 ? -1 : 0);
                     break;
                 }
 
@@ -604,21 +591,6 @@ public class CosmicTime
         }
         return -1;
     }
-
-    /// <summary>
-    /// <para>
-    /// Removes the <see cref="Epoch"/> at the given index from this timeline's collection.
-    /// </para>
-    /// <para>
-    /// Caution: <see cref="Instant"/> instances which refer to the indicated epoch, or any
-    /// which follow it, will no longer refer to the same moment, and may become invalid.
-    /// </para>
-    /// </summary>
-    /// <param name="index">The index of the <see cref="Epoch"/> in the <see cref="Epochs"/>
-    /// collection which should be removed. If negative, the most recent epoch will be
-    /// removed.</param>
-    public void RemoveEpoch(int index = -1)
-        => _epochs?.RemoveAt(index < 0 || index >= _epochs.Count ? _epochs.Count - 1 : index);
 
     /// <summary>
     /// <para>

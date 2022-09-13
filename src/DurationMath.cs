@@ -302,12 +302,12 @@ public partial struct Duration
         }
         if (IsPerpetual || divisor == T.Zero)
         {
-            return T.Create(Sign) != T.Sign(divisor)
+            return Sign != T.Sign(divisor)
                 ? NegativeInfinity
                 : PositiveInfinity;
         }
 
-        return MultiplyInteger(1 / divisor.Create<T, decimal>());
+        return MultiplyInteger(1 / divisor.CreateChecked<T, decimal>());
     }
 
     /// <summary>
@@ -326,7 +326,7 @@ public partial struct Duration
     /// <param name="divisor">An amount by which to divide this instance.</param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="divisor"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="divisor"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public Duration DivideFloatingPoint<T>(T divisor) where T : IFloatingPoint<T>
     {
@@ -336,7 +336,7 @@ public partial struct Duration
         }
         if (IsPerpetual || divisor == T.Zero)
         {
-            return T.Create(Sign) != T.Sign(divisor)
+            return Sign != T.Sign(divisor)
                 ? NegativeInfinity
                 : PositiveInfinity;
         }
@@ -503,7 +503,7 @@ public partial struct Duration
         {
             return Zero;
         }
-        var isNegative = T.Create(Sign) != T.Sign(factor);
+        var isNegative = Sign != T.Sign(factor);
         if (IsPerpetual)
         {
             return isNegative
@@ -531,15 +531,15 @@ public partial struct Duration
             newAeons);
         if (Years > 0)
         {
-            d += FromYearsInteger(T.Create(Years) * factor);
+            d += FromYearsInteger(T.CreateChecked(Years) * factor);
         }
         if (TotalNanoseconds > 0)
         {
-            d += FromNanosecondsInteger(T.Create(TotalNanoseconds) * factor);
+            d += FromNanosecondsInteger(T.CreateChecked(TotalNanoseconds) * factor);
         }
         if (TotalYoctoseconds > 0)
         {
-            d += FromYoctosecondsInteger(T.Create(TotalYoctoseconds) * factor);
+            d += FromYoctosecondsInteger(T.CreateChecked(TotalYoctoseconds) * factor);
         }
         if (PlanckTime.HasValue)
         {
@@ -558,7 +558,7 @@ public partial struct Duration
     /// <param name="factor">An amount by which to multiply this instance.</param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="factor"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="factor"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public Duration MultiplyFloatingPoint<T>(T factor) where T : IFloatingPoint<T>
     {
@@ -570,7 +570,7 @@ public partial struct Duration
         {
             return Zero;
         }
-        var isNegative = T.Create(Sign) != T.Sign(factor);
+        var isNegative = Sign != T.Sign(factor);
         if (IsPerpetual || T.IsInfinity(factor))
         {
             return isNegative
@@ -583,7 +583,7 @@ public partial struct Duration
         var y = 0.0m;
         if (Aeons.HasValue)
         {
-            var ae = (decimal)Aeons.Value * factor.Create<T, decimal>();
+            var ae = (decimal)Aeons.Value * factor.CreateChecked<T, decimal>();
             newAeons = (BigInteger)ae;
             y = ae % 1;
         }
@@ -598,19 +598,19 @@ public partial struct Duration
             newAeons);
         if (Years + y > 0)
         {
-            d += FromYearsFloatingPoint(T.Create(Years + y) * factor);
+            d += FromYearsFloatingPoint(T.CreateChecked(Years + y) * factor);
         }
         if (TotalNanoseconds > 0)
         {
-            d += FromNanosecondsFloatingPoint(T.Create(TotalNanoseconds) * factor);
+            d += FromNanosecondsFloatingPoint(T.CreateChecked(TotalNanoseconds) * factor);
         }
         if (TotalYoctoseconds > 0)
         {
-            d += FromYoctosecondsFloatingPoint(T.Create(TotalYoctoseconds) * factor);
+            d += FromYoctosecondsFloatingPoint(T.CreateChecked(TotalYoctoseconds) * factor);
         }
         if (PlanckTime.HasValue)
         {
-            d += FromPlanckTime((BigInteger)((decimal)PlanckTime.Value * factor.Create<T, decimal>()));
+            d += FromPlanckTime((BigInteger)((decimal)PlanckTime.Value * factor.CreateChecked<T, decimal>()));
         }
         if (isNegative)
         {

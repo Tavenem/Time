@@ -1,4 +1,6 @@
-﻿namespace Tavenem.Time;
+﻿using System.Numerics;
+
+namespace Tavenem.Time;
 
 public partial struct RelativeDuration
 {
@@ -53,7 +55,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromAeonsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromAeonsFloatingPoint(value));
@@ -108,7 +110,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromAttosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromAttosecondsFloatingPoint(value));
@@ -220,7 +222,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromDaysFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromDaysFloatingPoint(value));
@@ -275,7 +277,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromFemtosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromFemtosecondsFloatingPoint(value));
@@ -330,7 +332,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromHoursFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromHoursFloatingPoint(value));
@@ -385,7 +387,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromMicrosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromMicrosecondsFloatingPoint(value));
@@ -440,7 +442,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromMillisecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromMillisecondsFloatingPoint(value));
@@ -495,7 +497,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromMinutesFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromMinutesFloatingPoint(value));
@@ -550,7 +552,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromNanosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromNanosecondsFloatingPoint(value));
@@ -605,7 +607,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromPicosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromPicosecondsFloatingPoint(value));
@@ -754,7 +756,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromSecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromSecondsFloatingPoint(value));
@@ -831,7 +833,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromYearsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromYearsFloatingPoint(value));
@@ -886,7 +888,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromYoctosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromYoctosecondsFloatingPoint(value));
@@ -941,7 +943,7 @@ public partial struct RelativeDuration
     /// </param>
     /// <returns>A new <see cref="RelativeDuration"/> instance.</returns>
     /// <exception cref="ArgumentException">
-    /// <paramref name="value"/> is <see cref="IFloatingPoint{TSelf}.NaN"/>.
+    /// <paramref name="value"/> satisfies <see cref="INumberBase{TSelf}.IsNaN(TSelf)"/>.
     /// </exception>
     public static RelativeDuration FromZeptosecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromZeptosecondsFloatingPoint(value));

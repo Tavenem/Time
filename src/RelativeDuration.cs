@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Numerics;
+using System.Text.Json.Serialization;
 using Tavenem.Time.Converters;
 
 namespace Tavenem.Time;
@@ -20,13 +21,13 @@ namespace Tavenem.Time;
 [JsonConverter(typeof(RelativeDurationConverter))]
 public readonly partial struct RelativeDuration :
     IDivisionOperators<RelativeDuration, double, RelativeDuration>,
-    IEqualityOperators<RelativeDuration, RelativeDuration>,
-    IEqualityOperators<RelativeDuration, Duration>,
-    IEqualityOperators<RelativeDuration, DateTime>,
-    IEqualityOperators<RelativeDuration, TimeSpan>,
+    IEqualityOperators<RelativeDuration, RelativeDuration, bool>,
+    IEqualityOperators<RelativeDuration, Duration, bool>,
+    IEqualityOperators<RelativeDuration, DateTime, bool>,
+    IEqualityOperators<RelativeDuration, TimeSpan, bool>,
     IMultiplyOperators<RelativeDuration, double, RelativeDuration>,
     ISpanFormattable,
-    ISpanParseable<RelativeDuration>
+    ISpanParsable<RelativeDuration>
 {
     private const string DayString = "Dx";
     private const string YearString = "Yx";
