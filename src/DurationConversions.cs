@@ -359,7 +359,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromDaysInteger<T>(T value) where T : INumber<T>
-        => FromDays(value.CreateChecked<T, decimal>());
+        => FromDays(decimal.CreateChecked(value));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -479,7 +479,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromHoursInteger<T>(T value) where T : INumber<T>
-        => FromHours(value.CreateChecked<T, decimal>());
+        => FromHours(decimal.CreateChecked(value));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -535,7 +535,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromMicrosecondsInteger<T>(T value) where T : INumber<T>
-        => FromMicroseconds(value.CreateChecked<T, decimal>());
+        => FromMicroseconds(decimal.CreateChecked(value));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -591,7 +591,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromMillisecondsInteger<T>(T value) where T : INumber<T>
-        => FromMilliseconds(value.CreateChecked<T, decimal>());
+        => FromMilliseconds(decimal.CreateChecked(value));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -647,7 +647,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromMinutesInteger<T>(T value) where T : INumber<T>
-        => FromMinutes(value.CreateChecked<T, decimal>());
+        => FromMinutes(decimal.CreateChecked(value));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -827,7 +827,7 @@ public partial struct Duration
                 false,
                 null,
                 0,
-                value.CreateChecked<T, ulong>(),
+                ulong.CreateChecked(value),
                 0,
                 null);
         }
@@ -886,7 +886,7 @@ public partial struct Duration
                 false,
                 null,
                 0,
-                ns.CreateChecked<T, ulong>(),
+                ulong.CreateChecked(ns),
                 0,
                 null);
 
@@ -1308,7 +1308,7 @@ public partial struct Duration
     /// </param>
     /// <returns>A new <see cref="Duration"/> instance.</returns>
     public static Duration FromSecondsInteger<T>(T value) where T : INumber<T>
-        => FromSeconds(value.CreateChecked<T, decimal>());
+        => FromSeconds(decimal.CreateChecked(value));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -1520,7 +1520,7 @@ public partial struct Duration
                 null,
                 0,
                 0,
-                value.CreateChecked<T, uint>(),
+                uint.CreateChecked(value),
                 null);
         }
 
@@ -1579,7 +1579,7 @@ public partial struct Duration
                 null,
                 0,
                 0,
-                years.CreateChecked<T, uint>(),
+                uint.CreateChecked(years),
                 null);
 
             if (value > T.Zero)
@@ -1763,7 +1763,7 @@ public partial struct Duration
                 false,
                 false,
                 null,
-                value.CreateChecked<T, ulong>(),
+                ulong.CreateChecked(value),
                 0,
                 0,
                 null);
@@ -1821,8 +1821,8 @@ public partial struct Duration
             d += new Duration(
                 false,
                 false,
-                (BigInteger)(value.CreateChecked<T, decimal>() * PlanckTimePerYoctosecondDecimal),
-                ys.CreateChecked<T, ulong>(),
+                (BigInteger)(decimal.CreateChecked(value) * PlanckTimePerYoctosecondDecimal),
+                ulong.CreateChecked(ys),
                 0,
                 0,
                 null);

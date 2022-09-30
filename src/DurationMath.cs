@@ -307,7 +307,7 @@ public partial struct Duration
                 : PositiveInfinity;
         }
 
-        return MultiplyInteger(1 / divisor.CreateChecked<T, decimal>());
+        return MultiplyInteger(1 / decimal.CreateChecked(divisor));
     }
 
     /// <summary>
@@ -583,7 +583,7 @@ public partial struct Duration
         var y = 0.0m;
         if (Aeons.HasValue)
         {
-            var ae = (decimal)Aeons.Value * factor.CreateChecked<T, decimal>();
+            var ae = (decimal)Aeons.Value * decimal.CreateChecked(factor);
             newAeons = (BigInteger)ae;
             y = ae % 1;
         }
@@ -610,7 +610,7 @@ public partial struct Duration
         }
         if (PlanckTime.HasValue)
         {
-            d += FromPlanckTime((BigInteger)((decimal)PlanckTime.Value * factor.CreateChecked<T, decimal>()));
+            d += FromPlanckTime((BigInteger)((decimal)PlanckTime.Value * decimal.CreateChecked(factor)));
         }
         if (isNegative)
         {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.0-preview.2
+### Updated
+- Update dependencies
+
 ## 2.1.0-preview.1
 ### Updated
 - Update to .NET 7
