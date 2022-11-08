@@ -1,12 +1,16 @@
 # Changelog
 
+## 2.1
+### Updated
+- Update to .NET 7
+
 ## 2.1.0-preview.2
 ### Updated
 - Update dependencies
 
 ## 2.1.0-preview.1
 ### Updated
-- Update to .NET 7
+- Update to .NET 7 RC
 ### Changed
 - Epoch list no longer read-only
 - `CosmicTime` now uses default JSON (de)serialization

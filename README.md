@@ -13,7 +13,7 @@ Tavenem.Time is available as a [NuGet package](https://www.nuget.org/packages/Ta
 
 ## Roadmap
 
-Tavenem.Time's latest preview release targets .NET 7, which is also in preview. When a stable release of .NET 7 is published, a new stable release of Tavenem.Time will follow shortly.
+Tavenem.Time is a relatively stable library. Although additions and bugfixes are possible at any time, release should generally be expected to folow the .NET release cycle, with one or more preview releases during a framework preview, and a new stable release coinciding with the release of a new .NET framework major version.
 
 ## Contributing
 
