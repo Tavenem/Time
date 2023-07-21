@@ -134,14 +134,35 @@ public partial struct RelativeDuration
     /// cref="RelativeDuration"/> based on that assumption.
     /// </para>
     /// <para>
-    /// The <see cref="DateTime.ToUniversalTime"/> method is used to ensure that timezone
+    /// The <see cref="DateTime.ToUniversalTime"/> method is used to ensure that time zone
     /// information is stripped prior to conversion. This means that converting various <see
-    /// cref="DateTime"/> instances with differing timezone information should result in uniform
+    /// cref="DateTime"/> instances with differing time zone information should result in uniform
     /// <see cref="RelativeDuration"/> representations.
     /// </para>
     /// </remarks>
     public static RelativeDuration FromDateTime(DateTime dateTime)
         => new(Duration.FromDateTime(dateTime));
+
+    /// <summary>
+    /// Converts the given <see cref="DateOnly"/> value to a <see cref="RelativeDuration"/> value.
+    /// </summary>
+    /// <param name="dateOnly">A <see cref="DateOnly"/> value to convert.</param>
+    /// <returns>An equivalent <see cref="RelativeDuration"/> value.</returns>
+    /// <remarks>
+    /// <para>
+    /// The current aeon sequence of our universe is presumed to be 99731, based on current best
+    /// estimates (1.3799e10±2.1e7 years).
+    /// </para>
+    /// <para>
+    /// The <see cref="DateOnly"/> value is converted to a <see cref="RelativeDuration"/> instance
+    /// by presuming that the current aeon begins at the same moment as <see cref="DateTime.Ticks"/>
+    /// begins counting. The <see cref="DateTime.Ticks"/> of a <see cref="DateTime"/> created from
+    /// the <see cref="DateOnly"/> value are converted into the timekeeping system of <see
+    /// cref="RelativeDuration"/> based on that assumption.
+    /// </para>
+    /// </remarks>
+    public static RelativeDuration FromDateOnly(DateOnly dateOnly)
+        => new(Duration.FromDateOnly(dateOnly));
 
     /// <summary>
     /// Converts the given <see cref="DateTimeOffset"/> value to a <see
@@ -163,9 +184,9 @@ public partial struct RelativeDuration
     /// cref="RelativeDuration"/> based on that assumption.
     /// </para>
     /// <para>
-    /// The <see cref="DateTimeOffset.ToUniversalTime"/> method is used to ensure that timezone
+    /// The <see cref="DateTimeOffset.ToUniversalTime"/> method is used to ensure that time zone
     /// information is stripped prior to conversion. This means that converting various <see
-    /// cref="DateTimeOffset"/> instances with differing timezone information should result in
+    /// cref="DateTimeOffset"/> instances with differing time zone information should result in
     /// uniform <see cref="RelativeDuration"/> representations.
     /// </para>
     /// </remarks>
@@ -760,6 +781,28 @@ public partial struct RelativeDuration
     /// </exception>
     public static RelativeDuration FromSecondsFloatingPoint<T>(T value) where T : IFloatingPoint<T>
         => new(Duration.FromSecondsFloatingPoint(value));
+
+    /// <summary>
+    /// Converts the given <see cref="TimeOnly"/> value to a <see cref="RelativeDuration"/>
+    /// value.
+    /// </summary>
+    /// <param name="timeOnly">A <see cref="TimeOnly"/> value to convert.</param>
+    /// <returns>An equivalent <see cref="RelativeDuration"/> value.</returns>
+    /// <remarks>
+    /// <para>
+    /// The current aeon sequence of our universe is presumed to be 99731, based on current best
+    /// estimates (1.3799e10±2.1e7 years).
+    /// </para>
+    /// <para>
+    /// The <see cref="TimeOnly"/> value is converted to a <see cref="RelativeDuration"/>
+    /// instance by presuming that the current aeon begins at the same moment as <see
+    /// cref="TimeOnly.Ticks"/> begins counting. The <see cref="TimeOnly.Ticks"/> of the <see
+    /// cref="TimeOnly"/> value are converted into the timekeeping system of <see
+    /// cref="RelativeDuration"/> based on that assumption.
+    /// </para>
+    /// </remarks>
+    public static RelativeDuration FromTimeOnly(TimeOnly timeOnly)
+        => new(Duration.FromTimeOnly(timeOnly));
 
     /// <summary>
     /// Converts the given <see cref="TimeSpan"/> value to a <see cref="RelativeDuration"/>

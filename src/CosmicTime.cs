@@ -34,7 +34,7 @@ namespace Tavenem.Time;
 /// infinite).
 /// </para>
 /// </remarks>
-public class CosmicTime
+public class CosmicTime : IEquatable<CosmicTime?>
 {
     private const string DefaultCurrentEpoch = "Anthropocene Epoch";
 
@@ -61,6 +61,9 @@ public class CosmicTime
     /// </summary>
     public List<Epoch> Epochs { get; set; } = Epoch.DefaultEpochs.ToList();
 
+#pragma warning disable IDE0032 // Use auto property; requires init for deserialization, and private setter
+    private Instant _now;
+#pragma warning restore IDE0032 // Use auto property
     /// <summary>
     /// <para>
     /// The present moment.
@@ -70,8 +73,11 @@ public class CosmicTime
     /// cref="SubtractTime(Duration)"/>.
     /// </para>
     /// </summary>
-    [JsonInclude]
-    public Instant Now { get; private set; }
+    public Instant Now
+    {
+        get => _now;
+        init => _now = value;
+    }
 
     /// <summary>
     /// Initializes a new instance of <see cref="CosmicTime"/> based on the current time.
@@ -81,12 +87,13 @@ public class CosmicTime
     /// <summary>
     /// Initializes a new instance of <see cref="CosmicTime"/> with the given initial value.
     /// </summary>
-    /// <param name="present">The present moment.</param>
+    /// <param name="now">The present moment.</param>
     /// <param name="epochs">A collection of epochs which constitute the timeline of the universe.</param>
     /// <param name="currentEpoch">The name of the current epoch. May be <see langword="null"/>.</param>
-    public CosmicTime(Instant present, List<Epoch>? epochs = null, string? currentEpoch = null)
+    [JsonConstructor]
+    public CosmicTime(Instant now, List<Epoch>? epochs = null, string? currentEpoch = null)
     {
-        Now = present;
+        Now = now;
         Epochs = epochs ?? new();
         CurrentEpoch = currentEpoch;
     }
@@ -94,23 +101,23 @@ public class CosmicTime
     /// <summary>
     /// Initializes a new instance of <see cref="CosmicTime"/> with the given initial value.
     /// </summary>
-    /// <param name="present">The elapsed time since the beginning of the current epoch.</param>
+    /// <param name="now">The elapsed time since the beginning of the current epoch.</param>
     /// <param name="epochs">A collection of epochs which constitute the timeline of the universe.</param>
-    public CosmicTime(Duration present, params Epoch[] epochs)
+    public CosmicTime(Duration now, params Epoch[] epochs)
     {
-        Now = new(present);
+        Now = new(now);
         Epochs = epochs.Length == 0 ? new() : epochs.ToList();
     }
 
     /// <summary>
     /// Initializes a new instance of <see cref="CosmicTime"/> with the given initial value.
     /// </summary>
-    /// <param name="present">The elapsed time since the beginning of the current epoch.</param>
+    /// <param name="now">The elapsed time since the beginning of the current epoch.</param>
     /// <param name="currentEpoch">The name of the current epoch. May be <see langword="null"/>.</param>
     /// <param name="epochs">A collection of epochs which constitute the timeline of the universe.</param>
-    public CosmicTime(Duration present, string? currentEpoch, params Epoch[] epochs)
+    public CosmicTime(Duration now, string? currentEpoch, params Epoch[] epochs)
     {
-        Now = new(present);
+        Now = new(now);
         CurrentEpoch = currentEpoch;
         Epochs = epochs.Length == 0 ? new() : epochs.ToList();
     }
@@ -130,9 +137,9 @@ public class CosmicTime
     /// the default set (i.e. it will be set during the Holocene).
     /// </para>
     /// <para>
-    /// The <see cref="DateTime.ToUniversalTime"/> method is used to ensure that timezone
+    /// The <see cref="DateTime.ToUniversalTime"/> method is used to ensure that time zone
     /// information is stripped prior to conversion. This means that converting various <see
-    /// cref="DateTime"/> instances with differing timezone information should result in uniform
+    /// cref="DateTime"/> instances with differing time zone information should result in uniform
     /// <see cref="Duration"/> representations. Note, however, that <see cref="DateTime"/>
     /// instances with <see cref="DateTime.Kind"/> set to <see cref="DateTimeKind.Unspecified"/>
     /// may behave in unexpected ways when converted.
@@ -156,6 +163,39 @@ public class CosmicTime
     }
 
     /// <summary>
+    /// Converts the given <see cref="DateOnly"/> value to a <see cref="CosmicTime"/> instance.
+    /// </summary>
+    /// <param name="dateOnly">A <see cref="DateOnly"/> value to convert.</param>
+    /// <returns>A <see cref="CosmicTime"/> instance with the value of <see cref="Now"/> set to an
+    /// equivalent of <paramref name="dateOnly"/>.</returns>
+    /// <remarks>
+    /// <para>
+    /// The default epoch set is used. The final epoch is assumed to end on 15 July 1945
+    /// 23:59:59.999 (the apparent most likely candidate for the proposed start of the
+    /// Anthropocene is 16 July 1945). If the given <paramref name="dateOnly"/> represents a
+    /// value prior to that time, the resulting <see cref="CosmicTime"/> will have one less epoch than
+    /// the default set (i.e. it will be set during the Holocene).
+    /// </para>
+    /// </remarks>
+    public static CosmicTime FromDateOnly(DateOnly dateOnly)
+    {
+        var currentEpoch = (string?)DefaultCurrentEpoch;
+        var epochs = Epoch.DefaultEpochs.ToList();
+        var offset = Duration.Zero;
+        var dateTime = dateOnly.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc);
+        if (dateTime < _StartOfCurrentEpoch)
+        {
+            currentEpoch = epochs[^1].Name;
+            epochs.RemoveAt(epochs.Count - 1);
+            offset = _StartOfDateTimeInPreviousEpoch;
+        }
+        var ticks = dateTime.Ticks;
+        var years = (uint)(ticks / (TimeSpan.TicksPerSecond * Duration.SecondsPerDay));
+        ticks %= TimeSpan.TicksPerSecond * Duration.SecondsPerDay;
+        return new CosmicTime(new(offset + new Duration(years: years, nanoseconds: (ulong)ticks * Duration.NanosecondsPerTick)), epochs, currentEpoch);
+    }
+
+    /// <summary>
     /// Converts the given <see cref="DateTimeOffset"/> value to a <see cref="CosmicTime"/> instance.
     /// </summary>
     /// <param name="dateTime">A <see cref="DateTimeOffset"/> value to convert.</param>
@@ -170,9 +210,9 @@ public class CosmicTime
     /// the default set (i.e. it will be set during the Holocene).
     /// </para>
     /// <para>
-    /// The <see cref="DateTimeOffset.ToUniversalTime"/> method is used to ensure that timezone
+    /// The <see cref="DateTimeOffset.ToUniversalTime"/> method is used to ensure that time zone
     /// information is stripped prior to conversion. This means that converting various <see
-    /// cref="DateTimeOffset"/> instances with differing timezone information should result in uniform
+    /// cref="DateTimeOffset"/> instances with differing time zone information should result in uniform
     /// <see cref="Duration"/> representations.
     /// </para>
     /// </remarks>
@@ -205,9 +245,9 @@ public class CosmicTime
     /// Anthropocene is 16 July 1945).
     /// </para>
     /// <para>
-    /// The <see cref="DateTime.ToUniversalTime"/> method is used to ensure that timezone
+    /// The <see cref="DateTime.ToUniversalTime"/> method is used to ensure that time zone
     /// information is stripped prior to conversion. This means that converting various <see
-    /// cref="DateTime"/> instances with differing timezone information should result in uniform
+    /// cref="DateTime"/> instances with differing time zone information should result in uniform
     /// <see cref="Duration"/> representations.
     /// </para>
     /// </remarks>
@@ -317,9 +357,9 @@ public class CosmicTime
     /// value prior to that time, the resulting <see cref="Duration"/> will be negative.
     /// </para>
     /// <para>
-    /// The <see cref="DateTime.ToUniversalTime"/> method is used to ensure that timezone
+    /// The <see cref="DateTime.ToUniversalTime"/> method is used to ensure that time zone
     /// information is stripped prior to conversion. This means that converting various <see
-    /// cref="DateTime"/> instances with differing timezone information should result in uniform
+    /// cref="DateTime"/> instances with differing time zone information should result in uniform
     /// <see cref="Duration"/> representations. Note, however, that <see cref="DateTime"/>
     /// instances with <see cref="DateTime.Kind"/> set to <see cref="DateTimeKind.Unspecified"/>
     /// may behave in unexpected ways when converted.
@@ -341,9 +381,9 @@ public class CosmicTime
     /// value prior to that time, the resulting <see cref="Duration"/> will be negative.
     /// </para>
     /// <para>
-    /// The <see cref="DateTimeOffset.ToUniversalTime"/> method is used to ensure that timezone
+    /// The <see cref="DateTimeOffset.ToUniversalTime"/> method is used to ensure that time zone
     /// information is stripped prior to conversion. This means that converting various <see
-    /// cref="DateTimeOffset"/> instances with differing timezone information should result in uniform
+    /// cref="DateTimeOffset"/> instances with differing time zone information should result in uniform
     /// <see cref="Duration"/> representations
     /// </para>
     /// </remarks>
@@ -477,8 +517,18 @@ public class CosmicTime
             break;
         }
 
-        Now = t;
+        _now = t;
     }
+
+    /// <inheritdoc />
+    public bool Equals(CosmicTime? other)
+        => other is not null
+        && CurrentEpoch == other.CurrentEpoch
+        && Now.Equals(other.Now)
+        && Epochs.SequenceEqual(other.Epochs);
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => Equals(obj as CosmicTime);
 
     /// <summary>
     /// Gets an <see cref="Instant"/> which represents the result of adding the given <paramref
@@ -590,6 +640,16 @@ public class CosmicTime
             }
         }
         return -1;
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        var hashCode = new HashCode();
+        hashCode.Add(CurrentEpoch?.GetHashCode() ?? 0);
+        hashCode.Add(Now.GetHashCode());
+        hashCode.Add(GetEpochsHashCode());
+        return hashCode.ToHashCode();
     }
 
     /// <summary>
@@ -1303,7 +1363,7 @@ public class CosmicTime
     /// </para>
     /// <para>
     /// Note carefully that this is in contrast to <see cref="DateTime"/> format strings, which
-    /// uses "z" to denote timezone.
+    /// uses "z" to denote time zone.
     /// </para>
     /// </description>
     /// </item>
@@ -1636,7 +1696,7 @@ public class CosmicTime
     /// </para>
     /// <para>
     /// Note carefully that this is in contrast to <see cref="DateTime"/> format strings, which
-    /// uses "z" to denote timezone.
+    /// uses "z" to denote time zone.
     /// </para>
     /// </description>
     /// </item>
@@ -1969,7 +2029,7 @@ public class CosmicTime
     /// </para>
     /// <para>
     /// Note carefully that this is in contrast to <see cref="DateTime"/> format strings, which
-    /// uses "z" to denote timezone.
+    /// uses "z" to denote time zone.
     /// </para>
     /// </description>
     /// </item>
@@ -2028,6 +2088,15 @@ public class CosmicTime
     /// </summary>
     public override string ToString() => Now.ToString();
 
+    private int GetEpochsHashCode()
+    {
+        unchecked
+        {
+            return 367 * Epochs
+                .Aggregate(0, (a, c) => (a * 397) ^ c.GetHashCode());
+        }
+    }
+
 #pragma warning disable CS1591
 
     public static explicit operator CosmicTime(DateTime value) => FromDateTime(value);
@@ -2037,6 +2106,9 @@ public class CosmicTime
     public static explicit operator CosmicTime(DateTimeOffset value) => FromDateTimeOffset(value);
 
     public static explicit operator DateTimeOffset(CosmicTime value) => value.ToDateTimeOffset();
+
+    public static bool operator ==(CosmicTime? left, CosmicTime? right) => EqualityComparer<CosmicTime>.Default.Equals(left, right);
+    public static bool operator !=(CosmicTime? left, CosmicTime? right) => !(left == right);
 
 #pragma warning restore CS1591
 }

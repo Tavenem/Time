@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.2-preview.1
+### Added
+- Source generated (de)serialization support
+### Changed
+- Made `Epoch` a record
+### Updated
+- Update to .NET 8 preview
+
 ## 2.1
 ### Updated
 - Update to .NET 7
@@ -35,7 +43,7 @@
 - Update to C# 10 preview
 - Remove dependency on `HugeNumber` and use numeric generics
 - Use BigInteger for aeons and Planck time
-- Changed to readonly struct
+- Changed to read-only struct
 ### Removed
 - Support for non-JSON serialization
 - Individual `AddX` and `SubtractX` methods for time units; the `Add(Duration)` method can be used instead after a static `FromX` method

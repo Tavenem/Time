@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -27,10 +28,18 @@ public class DurationConverter : JsonConverter<Duration>
         "o",
         CultureInfo.InvariantCulture);
 
+    /// <inheritdoc />
+    public override Duration ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        => Read(ref reader, typeToConvert, options);
+
     /// <summary>Writes a specified value as JSON.</summary>
     /// <param name="writer">The writer to write to.</param>
     /// <param name="value">The value to convert to JSON.</param>
     /// <param name="options">An object that specifies serialization options to use.</param>
     public override void Write(Utf8JsonWriter writer, Duration value, JsonSerializerOptions options)
         => writer.WriteStringValue(value.ToString("o", CultureInfo.InvariantCulture));
+
+    /// <inheritdoc />
+    public override void WriteAsPropertyName(Utf8JsonWriter writer, [DisallowNull] Duration value, JsonSerializerOptions options)
+        => writer.WritePropertyName(value.ToString("o", CultureInfo.InvariantCulture));
 }

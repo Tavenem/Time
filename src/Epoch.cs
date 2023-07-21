@@ -4,7 +4,18 @@
 /// An epoch is a unit of time with a (positive) <see cref="Duration"/> and an optional <see
 /// cref="Name"/>.
 /// </summary>
-public readonly struct Epoch
+/// <param name="Duration">
+/// <para>
+/// The duration of the epoch.
+/// </para>
+/// <para>
+/// Must be positive and nonzero.
+/// </para>
+/// </param>
+/// <param name="Name">
+/// The name of the epoch. May be <see langword="null"/>.
+/// </param>
+public readonly record struct Epoch(Duration Duration, string? Name = null)
 {
     /// <summary>
     /// The epochs which make up our universe.
@@ -52,25 +63,8 @@ public readonly struct Epoch
     /// <summary>
     /// The duration of this epoch.
     /// </summary>
-    public Duration Duration { get; }
-
-    /// <summary>
-    /// The name of this epoch. May be <see langword="null"/>.
-    /// </summary>
-    public string? Name { get; }
-
-    /// <summary>
-    /// Initializes a new instance of <see cref="Epoch"/>.
-    /// </summary>
-    /// <param name="duration">The duration of the epoch. Must be positive and nonzero.</param>
-    /// <param name="name">The name of the epoch. May be <see langword="null"/>.</param>
-    public Epoch(Duration duration, string? name = null)
-    {
-        if (duration.IsNegative || duration.IsZero)
-        {
-            throw new ArgumentException($"{nameof(duration)} must be positive and non-zero", nameof(duration));
-        }
-        Duration = duration;
-        Name = name;
-    }
+    public Duration Duration { get; } = Duration.IsNegative
+        || Duration.IsZero
+        ? throw new ArgumentException($"{nameof(Duration)} must be positive and non-zero", nameof(Duration))
+        : Duration;
 }

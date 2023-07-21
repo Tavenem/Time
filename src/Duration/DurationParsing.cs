@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Numerics;
 
 namespace Tavenem.Time;
@@ -33,23 +34,18 @@ public partial struct Duration
     /// Converts the specified string representation to a <see cref="Duration"/>.
     /// </summary>
     /// <param name="s">A string containing a duration to convert.</param>
-    /// <returns>The <see cref="Duration"/> value equivalent to the duration contained in
-    /// <paramref name="s"/>.</returns>
+    /// <returns>
+    /// The <see cref="Duration"/> value equivalent to the duration contained in <paramref
+    /// name="s"/>.
+    /// </returns>
     /// <param name="provider">An object that supplies culture-specific formatting
     /// information.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="s"/> is <see
-    /// langword="null"/>.</exception>
-    /// <exception cref="FormatException"><paramref name="s"/> is an empty string (""), or
-    /// contains only white space, contains invalid <see cref="Duration"/> data, or the format
-    /// cannot be determined.</exception>
-    public static Duration Parse(string? s, IFormatProvider? provider = null)
-    {
-        if (s is null)
-        {
-            throw new ArgumentNullException(nameof(s));
-        }
-        return Parse(s.AsSpan(), provider);
-    }
+    /// <exception cref="FormatException">
+    /// <paramref name="s"/> is an empty string (""), or contains only white space, contains invalid
+    /// <see cref="Duration"/> data, or the format cannot be determined.
+    /// </exception>
+    public static Duration Parse(string s, IFormatProvider? provider = null)
+        => Parse(s.AsSpan(), provider);
 
     /// <summary>
     /// Converts the specified string representation to a <see cref="Duration"/>.
@@ -68,12 +64,10 @@ public partial struct Duration
     /// <param name="s">A string containing a duration to convert.</param>
     /// <returns>The <see cref="Duration"/> value equivalent to the duration contained in
     /// <paramref name="s"/>.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="s"/> is <see
-    /// langword="null"/>.</exception>
     /// <exception cref="FormatException"><paramref name="s"/> is an empty string (""), or
     /// contains only white space, contains invalid <see cref="Duration"/> data, or the format
     /// cannot be determined.</exception>
-    public static Duration Parse(string? s) => Parse(s, null);
+    public static Duration Parse(string s) => Parse(s, null);
 
     /// <summary>
     /// Converts the specified string representation to a <see cref="Duration"/>. The format of
@@ -103,29 +97,27 @@ public partial struct Duration
     }
 
     /// <summary>
-    /// Converts the specified string representation to a <see cref="Duration"/>. The format of
-    /// the string representation must match the specified format exactly.
+    /// Converts the specified string representation to a <see cref="Duration"/>. The format of the
+    /// string representation must match the specified format exactly.
     /// </summary>
     /// <param name="s">A string containing a duration to convert.</param>
-    /// <param name="format">A format specifier that defines the required format of <paramref
-    /// name="s"/>.</param>
-    /// <param name="provider">An object that supplies culture-specific formatting
-    /// information.</param>
-    /// <returns>The <see cref="Duration"/> value equivalent to the duration contained in
-    /// <paramref name="s"/>.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="s"/> or <paramref
-    /// name="format"/> is <see langword="null"/>.</exception>
-    /// <exception cref="FormatException"><paramref name="s"/> or <paramref name="format"/> is
-    /// an empty string (""), or <paramref name="s"/> contains only white space, contains
-    /// invalid <see cref="Duration"/> data, or the format cannot be determined.</exception>
-    public static Duration ParseExact(string? s, string? format = null, IFormatProvider? provider = null)
-    {
-        if (s is null)
-        {
-            throw new ArgumentNullException(nameof(s));
-        }
-        return ParseExact(s.AsSpan(), format is null ? new ReadOnlySpan<char>() : format.AsSpan(), provider);
-    }
+    /// <param name="format">
+    /// A format specifier that defines the required format of <paramref name="s"/>.
+    /// </param>
+    /// <param name="provider">
+    /// An object that supplies culture-specific formatting information.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Duration"/> value equivalent to the duration contained in <paramref
+    /// name="s"/>.
+    /// </returns>
+    /// <exception cref="FormatException">
+    /// <paramref name="s"/> or <paramref name="format"/> is an empty string (""), or <paramref
+    /// name="s"/> contains only white space, contains invalid <see cref="Duration"/> data, or the
+    /// format cannot be determined.
+    /// </exception>
+    public static Duration ParseExact(string s, string? format = null, IFormatProvider? provider = null)
+        => ParseExact(s.AsSpan(), format is null ? new ReadOnlySpan<char>() : format.AsSpan(), provider);
 
     /// <summary>
     /// Converts the specified string representation to a <see cref="Duration"/>. The format of
@@ -136,12 +128,10 @@ public partial struct Duration
     /// name="s"/>.</param>
     /// <returns>The <see cref="Duration"/> value equivalent to the duration contained in
     /// <paramref name="s"/>.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="s"/> or <paramref
-    /// name="format"/> is <see langword="null"/>.</exception>
     /// <exception cref="FormatException"><paramref name="s"/> or <paramref name="format"/> is
     /// an empty string (""), or <paramref name="s"/> contains only white space, contains
     /// invalid <see cref="Duration"/> data, or the format cannot be determined.</exception>
-    public static Duration ParseExact(string? s, string? format = null)
+    public static Duration ParseExact(string s, string? format = null)
         => ParseExact(s, format, null);
 
     /// <summary>
@@ -232,7 +222,7 @@ public partial struct Duration
     /// chosen <seealso cref="ToString(string, IFormatProvider)"/>
     /// </para>
     /// </remarks>
-    public static bool TryParse(string? s, IFormatProvider? provider, out Duration result)
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out Duration result)
     {
         if (string.IsNullOrWhiteSpace(s))
         {
@@ -267,7 +257,7 @@ public partial struct Duration
     /// chosen <seealso cref="ToString(string, IFormatProvider)"/>
     /// </para>
     /// </remarks>
-    public static bool TryParse(string? s, out Duration result)
+    public static bool TryParse([NotNullWhen(true)] string? s, out Duration result)
         => TryParse(s, null, out result);
 
     /// <summary>
@@ -406,7 +396,7 @@ public partial struct Duration
     /// chosen <seealso cref="ToString(string, IFormatProvider)"/>
     /// </para>
     /// </remarks>
-    public static bool TryParseExact(string? s, string? format, IFormatProvider? provider, out Duration result)
+    public static bool TryParseExact([NotNullWhen(true)] string? s, string? format, IFormatProvider? provider, out Duration result)
     {
         if (string.IsNullOrWhiteSpace(s))
         {
@@ -445,7 +435,7 @@ public partial struct Duration
     /// chosen <seealso cref="ToString(string, IFormatProvider)"/>
     /// </para>
     /// </remarks>
-    public static bool TryParseExact(string? s, string? format, out Duration result)
+    public static bool TryParseExact([NotNullWhen(true)] string? s, string? format, out Duration result)
         => TryParseExact(s, format, null, out result);
 
     /// <summary>
@@ -1022,7 +1012,7 @@ public partial struct Duration
         while (unitIndex < unitIndexCount)
         {
             var unit = units[unitIndex];
-            if (!TryGetDigitSlice(input, index, unitIndex, unit.Seperator, unit.Length, out var slice, out var length))
+            if (!TryGetDigitSlice(input, index, unitIndex, unit.Separator, unit.Length, out var slice, out var length))
             {
                 return false;
             }
@@ -1118,7 +1108,7 @@ public partial struct Duration
             }
             unitIndex++;
             index += length;
-            index += unit.SeperatorLength;
+            index += unit.SeparatorLength;
         }
 
         result = new Duration(isNegative, false, planckTimeValue, yoctosecondValue, nanosecondValue, yearValue, aeons);

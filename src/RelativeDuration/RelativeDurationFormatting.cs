@@ -2,7 +2,7 @@
 
 namespace Tavenem.Time;
 
-public partial struct RelativeDuration : IFormattable
+public partial struct RelativeDuration
 {
     /// <summary>
     /// Converts the value of the current <see cref="RelativeDuration"/> object to its
@@ -286,7 +286,7 @@ public partial struct RelativeDuration : IFormattable
     /// </para>
     /// <para>
     /// Note carefully that this is in contrast to <see cref="DateTime"/> format strings, which
-    /// uses "z" to denote timezone.
+    /// uses "z" to denote time zone.
     /// </para>
     /// </description>
     /// </item>
@@ -628,7 +628,7 @@ public partial struct RelativeDuration : IFormattable
     /// </para>
     /// <para>
     /// Note carefully that this is in contrast to <see cref="DateTime"/> format strings, which
-    /// uses "z" to denote timezone.
+    /// uses "z" to denote time zone.
     /// </para>
     /// </description>
     /// </item>

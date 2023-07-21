@@ -26,6 +26,7 @@ public readonly partial struct RelativeDuration :
     IEqualityOperators<RelativeDuration, DateTime, bool>,
     IEqualityOperators<RelativeDuration, TimeSpan, bool>,
     IMultiplyOperators<RelativeDuration, double, RelativeDuration>,
+    IFormattable,
     ISpanFormattable,
     ISpanParsable<RelativeDuration>
 {

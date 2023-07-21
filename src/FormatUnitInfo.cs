@@ -1,6 +1,6 @@
 ﻿namespace Tavenem.Time;
 
-internal struct FormatUnitInfo
+internal readonly struct FormatUnitInfo
 {
     internal char FormatChar { get; }
     internal char[]? FormatChars { get; }

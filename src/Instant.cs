@@ -130,15 +130,15 @@ public readonly struct Instant :
         => first.CompareTo(second) <= 0 ? first : second;
 
     /// <summary>
-    /// Indicates whether this instance and a specified object are equal.
+    /// Indicates whether this <see cref="Instant"/> instance and another are equal.
     /// </summary>
-    /// <param name="obj">The object to compare with the current instance.</param>
+    /// <param name="other">The <see cref="Instant"/> instance to compare with this
+    /// one.</param>
     /// <returns>
-    /// <see langword="true"/> if the object and the current instance are equal; otherwise <see
-    /// langword="false"/>.
+    /// <see langword="true"/> if the <see cref="Instant"/> instance and this one are
+    /// equal; otherwise <see langword="false"/>.
     /// </returns>
-    public override bool Equals(object? obj)
-        => obj is Instant other && Equals(other);
+    public bool Equals(Instant other) => Epoch == other.Epoch && Offset.Equals(other.Offset);
 
     /// <summary>
     /// Indicates whether this <see cref="Instant"/> instance and another are equal.
@@ -149,7 +149,18 @@ public readonly struct Instant :
     /// <see langword="true"/> if the <see cref="Instant"/> instance and this one are
     /// equal; otherwise <see langword="false"/>.
     /// </returns>
-    public bool Equals(Instant other) => Epoch == other.Epoch && Offset.Equals(other.Offset);
+    public bool Equals(Instant? other) => other.HasValue && Equals(other.Value);
+
+    /// <summary>
+    /// Indicates whether this instance and a specified object are equal.
+    /// </summary>
+    /// <param name="obj">The object to compare with the current instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the object and the current instance are equal; otherwise <see
+    /// langword="false"/>.
+    /// </returns>
+    public override bool Equals(object? obj)
+        => obj is Instant other && Equals(other);
 
     /// <summary>
     /// Returns the hash code for this instance.
@@ -461,7 +472,7 @@ public readonly struct Instant :
     /// </para>
     /// <para>
     /// Note carefully that this is in contrast to <see cref="DateTime"/> format strings, which
-    /// uses "z" to denote timezone.
+    /// uses "z" to denote time zone.
     /// </para>
     /// </description>
     /// </item>
@@ -805,7 +816,7 @@ public readonly struct Instant :
     /// </para>
     /// <para>
     /// Note carefully that this is in contrast to <see cref="DateTime"/> format strings, which
-    /// uses "z" to denote timezone.
+    /// uses "z" to denote time zone.
     /// </para>
     /// </description>
     /// </item>

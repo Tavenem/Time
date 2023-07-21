@@ -36,6 +36,7 @@ public readonly partial struct Duration :
     IModulusOperators<Duration, Duration, Duration>,
     IMultiplyOperators<Duration, decimal, Duration>,
     IMultiplyOperators<Duration, double, Duration>,
+    IFormattable,
     ISpanFormattable,
     ISpanParsable<Duration>,
     ISubtractionOperators<Duration, Duration, Duration>,
@@ -83,7 +84,7 @@ public readonly partial struct Duration :
     /// The number of astronomical aeons represented by this <see cref="Duration"/>.
     /// </para>
     /// <para>
-    /// An astronimical aeon (AE) is 10e9 years.
+    /// An astronomical aeon (AE) is 10e9 years.
     /// </para>
     /// </summary>
     [JsonConverter(typeof(BigIntegerConverter))]
@@ -177,8 +178,8 @@ public readonly partial struct Duration :
     public uint Microseconds => (uint)(TotalNanoseconds / NanosecondsPerMicrosecond % MicrosecondsPerMillisecond);
 
     /// <summary>
-    /// The number of whole milliseconds represented by this <see cref="Duration"/> beyond its
-    /// <see cref="Nanoseconds"/>. This is a calculated property which reflects the value of <see
+    /// The number of whole milliseconds represented by this <see cref="Duration"/> beyond its <see
+    /// cref="Seconds"/>. This is a calculated property which reflects the value of <see
     /// cref="TotalNanoseconds"/>.
     /// </summary>
     [JsonIgnore]
@@ -276,32 +277,32 @@ public readonly partial struct Duration :
     }
 
     /// <summary>
-    /// The number of nanoseconds represented by this <see cref="Duration"/> beyond its
-    /// <see cref="Years"/>.
+    /// The total number of nanoseconds represented by this <see cref="Duration"/> beyond its <see
+    /// cref="Years"/>.
     /// </summary>
     /// <remarks>
-    /// Note carefully that this is not nanoseconds in excess of <see cref="Microseconds"/>.
-    /// <see cref="Milliseconds"/>, <see cref="Microseconds"/>, and <see cref="Nanoseconds"/>
-    /// are all calculated properties based on <see cref="TotalNanoseconds"/>.
+    /// Note carefully that this is not nanoseconds in excess of <see cref="Microseconds"/>. <see
+    /// cref="Milliseconds"/>, <see cref="Microseconds"/>, and <see cref="Nanoseconds"/> are all
+    /// calculated properties based on <see cref="TotalNanoseconds"/>.
     /// </remarks>
     public ulong TotalNanoseconds { get; }
 
     /// <summary>
-    /// The number of yoctoseconds represented by this <see cref="Duration"/> beyond its
-    /// <see cref="TotalNanoseconds"/>.
+    /// The total number of yoctoseconds represented by this <see cref="Duration"/> beyond its <see
+    /// cref="TotalNanoseconds"/>.
     /// </summary>
     /// <remarks>
-    /// Note carefully that this is not yoctoseconds in excess of <see cref="Zeptoseconds"/>.
-    /// <see cref="Picoseconds"/>, <see cref="Femtoseconds"/>, <see cref="Attoseconds"/>, <see
-    /// cref="Zeptoseconds"/>, and <see cref="Yoctoseconds"/> are all calculated properties
-    /// based on <see cref="TotalYoctoseconds"/>.
+    /// Note carefully that this is not yoctoseconds in excess of <see cref="Zeptoseconds"/>. <see
+    /// cref="Picoseconds"/>, <see cref="Femtoseconds"/>, <see cref="Attoseconds"/>, <see
+    /// cref="Zeptoseconds"/>, and <see cref="Yoctoseconds"/> are all calculated properties based on
+    /// <see cref="TotalYoctoseconds"/>.
     /// </remarks>
     public ulong TotalYoctoseconds { get; }
 
     /// <summary>
     /// <para>
-    /// The number of astronomical years represented by this <see cref="Duration"/>
-    /// beyond its <see cref="Aeons"/>.
+    /// The number of astronomical years represented by this <see cref="Duration"/> beyond its <see
+    /// cref="Aeons"/>.
     /// </para>
     /// <para>
     /// An astronomical (Julian) year is exactly 31557600 seconds long (365.25 * 86400).
@@ -311,27 +312,26 @@ public readonly partial struct Duration :
 
     /// <summary>
     /// <para>
-    /// The number of whole yoctoseconds represented by this <see cref="Duration"/> beyond its
-    /// <see cref="Zeptoseconds"/>.
+    /// The number of whole yoctoseconds represented by this <see cref="Duration"/> beyond its <see
+    /// cref="Zeptoseconds"/>.
     /// </para>
     /// <para>
-    /// This is a calculated property which reflects the value of <see
-    /// cref="TotalYoctoseconds"/>.
+    /// This is a calculated property which reflects the value of <see cref="TotalYoctoseconds"/>.
     /// </para>
     /// </summary>
     /// <remarks>
     /// The property <see cref="TotalYoctoseconds"/> records all seconds in excess of <see
     /// cref="TotalNanoseconds"/>, rather than only those since the last zeptosecond. This
-    /// calculated property is provided as a convenience for obtaining the more intuitive number
-    /// of yoctoseconds.
+    /// calculated property is provided as a convenience for obtaining the more intuitive number of
+    /// yoctoseconds.
     /// </remarks>
     [JsonIgnore]
     public uint Yoctoseconds => (uint)(TotalYoctoseconds % YoctosecondsPerZeptosecond);
 
     /// <summary>
-    /// The number of whole zeptoseconds represented by this <see cref="Duration"/> beyond its
-    /// <see cref="Attoseconds"/>. This is a calculated property which reflects the value of
-    /// <see cref="TotalYoctoseconds"/>.
+    /// The number of whole zeptoseconds represented by this <see cref="Duration"/> beyond its <see
+    /// cref="Attoseconds"/>. This is a calculated property which reflects the value of <see
+    /// cref="TotalYoctoseconds"/>.
     /// </summary>
     [JsonIgnore]
     public uint Zeptoseconds => (uint)(TotalYoctoseconds / YoctosecondsPerZeptosecond % ZeptosecondsPerAttosecond);
@@ -346,7 +346,7 @@ public readonly partial struct Duration :
     /// The number of astronomical aeons.
     /// </para>
     /// <para>
-    /// An astronimical aeon (AE) is 10e9 years.
+    /// An astronomical aeon (AE) is 10e9 years.
     /// </para>
     /// <para>
     /// Cannot be negative; only the <see cref="Duration"/> as a whole can be negative. Values
@@ -599,7 +599,7 @@ public readonly partial struct Duration :
     /// The number of astronomical aeons.
     /// </para>
     /// <para>
-    /// An astronimical aeon (AE) is 10e9 years.
+    /// An astronomical aeon (AE) is 10e9 years.
     /// </para>
     /// <para>
     /// Cannot be negative; only the <see cref="Duration"/> as a whole can be negative. Values
@@ -655,14 +655,16 @@ public readonly partial struct Duration :
         && Aeons == other.Aeons;
 
     /// <summary>
-    /// Indicates whether this instance and a specified object are equal.
+    /// Indicates whether this <see cref="Duration"/> instance and another are equal.
     /// </summary>
-    /// <param name="obj">The object to compare with the current instance.</param>
+    /// <param name="other">The <see cref="Duration"/> instance to compare with this
+    /// one.</param>
     /// <returns>
-    /// <see langword="true"/> if the object and the current instance are equal; otherwise <see
-    /// langword="false"/>.
+    /// <see langword="true"/> if the <see cref="Duration"/> instance and this one are
+    /// equal; otherwise <see langword="false"/>.
     /// </returns>
-    public override bool Equals(object? obj) => obj is Duration other && Equals(other);
+    public bool Equals(Duration? other)
+        => other.HasValue && Equals(other.Value);
 
     /// <summary>
     /// Indicates whether this <see cref="Duration"/> instance and a <see
@@ -678,6 +680,19 @@ public readonly partial struct Duration :
         => other.Relativity == RelativeDurationType.Absolute && Equals(other.Duration);
 
     /// <summary>
+    /// Indicates whether this <see cref="Duration"/> instance and a <see
+    /// cref="RelativeDuration"/> instance are equal.
+    /// </summary>
+    /// <param name="other">The <see cref="RelativeDuration"/> instance to compare with this
+    /// <see cref="Duration"/> instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the <see cref="RelativeDuration"/> instance and this <see
+    /// cref="Duration"/> instance are equal; otherwise <see langword="false"/>.
+    /// </returns>
+    public bool Equals(RelativeDuration? other)
+        => other.HasValue && Equals(other.Value);
+
+    /// <summary>
     /// Indicates whether this <see cref="Duration"/> instance and a <see cref="DateTime"/>
     /// instance are equal.
     /// </summary>
@@ -688,6 +703,44 @@ public readonly partial struct Duration :
     /// cref="Duration"/> instance are equal; otherwise <see langword="false"/>.
     /// </returns>
     public bool Equals(DateTime other) => Equals(FromDateTime(other));
+
+    /// <summary>
+    /// Indicates whether this <see cref="Duration"/> instance and a <see cref="DateTime"/>
+    /// instance are equal.
+    /// </summary>
+    /// <param name="other">The <see cref="DateTime"/> instance to compare with this
+    /// <see cref="Duration"/> instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the <see cref="DateTime"/> instance and this <see
+    /// cref="Duration"/> instance are equal; otherwise <see langword="false"/>.
+    /// </returns>
+    public bool Equals(DateTime? other)
+        => other.HasValue && Equals(other.Value);
+
+    /// <summary>
+    /// Indicates whether this <see cref="Duration"/> instance and a <see cref="DateOnly"/>
+    /// instance are equal.
+    /// </summary>
+    /// <param name="other">The <see cref="DateOnly"/> instance to compare with this
+    /// <see cref="Duration"/> instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the <see cref="DateOnly"/> instance and this <see
+    /// cref="Duration"/> instance are equal; otherwise <see langword="false"/>.
+    /// </returns>
+    public bool Equals(DateOnly other) => Equals(FromDateOnly(other));
+
+    /// <summary>
+    /// Indicates whether this <see cref="Duration"/> instance and a <see cref="DateOnly"/>
+    /// instance are equal.
+    /// </summary>
+    /// <param name="other">The <see cref="DateOnly"/> instance to compare with this
+    /// <see cref="Duration"/> instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the <see cref="DateOnly"/> instance and this <see
+    /// cref="Duration"/> instance are equal; otherwise <see langword="false"/>.
+    /// </returns>
+    public bool Equals(DateOnly? other)
+        => other.HasValue && Equals(other.Value);
 
     /// <summary>
     /// Indicates whether this <see cref="Duration"/> instance and a <see
@@ -702,6 +755,44 @@ public readonly partial struct Duration :
     public bool Equals(DateTimeOffset other) => Equals(FromDateTimeOffset(other));
 
     /// <summary>
+    /// Indicates whether this <see cref="Duration"/> instance and a <see
+    /// cref="DateTimeOffset"/> instance are equal.
+    /// </summary>
+    /// <param name="other">The <see cref="DateTimeOffset"/> instance to compare with this
+    /// <see cref="Duration"/> instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the <see cref="DateTimeOffset"/> instance and this <see
+    /// cref="Duration"/> instance are equal; otherwise <see langword="false"/>.
+    /// </returns>
+    public bool Equals(DateTimeOffset? other)
+        => other.HasValue && Equals(other.Value);
+
+    /// <summary>
+    /// Indicates whether this <see cref="Duration"/> instance and a <see cref="TimeOnly"/>
+    /// instance are equal.
+    /// </summary>
+    /// <param name="other">The <see cref="TimeOnly"/> instance to compare with this
+    /// <see cref="Duration"/> instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the <see cref="TimeOnly"/> instance and this <see
+    /// cref="Duration"/> instance are equal; otherwise <see langword="false"/>.
+    /// </returns>
+    public bool Equals(TimeOnly other) => Equals(FromTimeOnly(other));
+
+    /// <summary>
+    /// Indicates whether this <see cref="Duration"/> instance and a <see cref="TimeOnly"/>
+    /// instance are equal.
+    /// </summary>
+    /// <param name="other">The <see cref="TimeOnly"/> instance to compare with this
+    /// <see cref="Duration"/> instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the <see cref="TimeOnly"/> instance and this <see
+    /// cref="Duration"/> instance are equal; otherwise <see langword="false"/>.
+    /// </returns>
+    public bool Equals(TimeOnly? other)
+        => other.HasValue && Equals(other.Value);
+
+    /// <summary>
     /// Indicates whether this <see cref="Duration"/> instance and a <see cref="TimeSpan"/>
     /// instance are equal.
     /// </summary>
@@ -712,6 +803,40 @@ public readonly partial struct Duration :
     /// cref="Duration"/> instance are equal; otherwise <see langword="false"/>.
     /// </returns>
     public bool Equals(TimeSpan other) => Equals(FromTimeSpan(other));
+
+    /// <summary>
+    /// Indicates whether this <see cref="Duration"/> instance and a <see cref="TimeSpan"/>
+    /// instance are equal.
+    /// </summary>
+    /// <param name="other">The <see cref="TimeSpan"/> instance to compare with this
+    /// <see cref="Duration"/> instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the <see cref="TimeSpan"/> instance and this <see
+    /// cref="Duration"/> instance are equal; otherwise <see langword="false"/>.
+    /// </returns>
+    public bool Equals(TimeSpan? other)
+        => other.HasValue && Equals(other.Value);
+
+    /// <summary>
+    /// Indicates whether this instance and a specified object are equal.
+    /// </summary>
+    /// <param name="obj">The object to compare with the current instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the object and the current instance are equal; otherwise <see
+    /// langword="false"/>.
+    /// </returns>
+    public override bool Equals(object? obj) => obj switch
+    {
+        null => false,
+        Duration other => Equals(other),
+        RelativeDuration relativeDuration => Equals(relativeDuration),
+        DateTime dateTime => Equals(dateTime),
+        DateOnly dateOnly => Equals(dateOnly),
+        DateTimeOffset dateTimeOffset => Equals(dateTimeOffset),
+        TimeOnly timeOnly => Equals(timeOnly),
+        TimeSpan timeSpan => Equals(timeSpan),
+        _ => false,
+    };
 
     /// <summary>
     /// Returns the hash code for this instance.

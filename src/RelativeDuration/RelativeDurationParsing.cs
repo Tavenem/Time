@@ -1,4 +1,6 @@
-﻿namespace Tavenem.Time;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Tavenem.Time;
 
 public partial struct RelativeDuration
 {
@@ -30,19 +32,11 @@ public partial struct RelativeDuration
     /// <paramref name="s"/>.</returns>
     /// <param name="provider">An object that supplies culture-specific formatting
     /// information.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="s"/> is <see
-    /// langword="null"/>.</exception>
     /// <exception cref="FormatException"><paramref name="s"/> is an empty string (""), or
     /// contains only white space, contains invalid <see cref="RelativeDuration"/> data, or the format
     /// cannot be determined.</exception>
-    public static RelativeDuration Parse(string? s, IFormatProvider? provider = null)
-    {
-        if (s is null)
-        {
-            throw new ArgumentNullException(nameof(s));
-        }
-        return Parse(s.AsSpan(), provider);
-    }
+    public static RelativeDuration Parse(string s, IFormatProvider? provider = null)
+        => Parse(s.AsSpan(), provider);
 
     /// <summary>
     /// Converts the specified string representation to a <see cref="RelativeDuration"/>.
@@ -61,12 +55,10 @@ public partial struct RelativeDuration
     /// <param name="s">A string containing a duration to convert.</param>
     /// <returns>The <see cref="RelativeDuration"/> value equivalent to the duration contained in
     /// <paramref name="s"/>.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="s"/> is <see
-    /// langword="null"/>.</exception>
     /// <exception cref="FormatException"><paramref name="s"/> is an empty string (""), or
     /// contains only white space, contains invalid <see cref="RelativeDuration"/> data, or the format
     /// cannot be determined.</exception>
-    public static RelativeDuration Parse(string? s) => Parse(s, null);
+    public static RelativeDuration Parse(string s) => Parse(s, null);
 
     /// <summary>
     /// Converts the specified string representation to a <see cref="RelativeDuration"/>. The
@@ -106,20 +98,12 @@ public partial struct RelativeDuration
     /// <returns>The <see cref="RelativeDuration"/> value equivalent to the duration contained
     /// in
     /// <paramref name="s"/>.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="s"/> or <paramref
-    /// name="format"/> is <see langword="null"/>.</exception>
     /// <exception cref="FormatException"><paramref name="s"/> or <paramref name="format"/> is
     /// an empty string (""), or <paramref name="s"/> contains only white space, contains
     /// invalid <see cref="RelativeDuration"/> data, or the format cannot be
     /// determined.</exception>
-    public static RelativeDuration ParseExact(string? s, string? format = null, IFormatProvider? provider = null)
-    {
-        if (s is null)
-        {
-            throw new ArgumentNullException(nameof(s));
-        }
-        return ParseExact(s.AsSpan(), format is null ? new ReadOnlySpan<char>() : format.AsSpan(), provider);
-    }
+    public static RelativeDuration ParseExact(string s, string? format = null, IFormatProvider? provider = null)
+        => ParseExact(s.AsSpan(), format is null ? new ReadOnlySpan<char>() : format.AsSpan(), provider);
 
     /// <summary>
     /// Converts the specified string representation to a <see cref="RelativeDuration"/>. The
@@ -149,13 +133,11 @@ public partial struct RelativeDuration
     /// <returns>The <see cref="RelativeDuration"/> value equivalent to the duration contained
     /// in
     /// <paramref name="s"/>.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="s"/> or <paramref
-    /// name="format"/> is <see langword="null"/>.</exception>
     /// <exception cref="FormatException"><paramref name="s"/> or <paramref name="format"/> is
     /// an empty string (""), or <paramref name="s"/> contains only white space, contains
     /// invalid <see cref="RelativeDuration"/> data, or the format cannot be
     /// determined.</exception>
-    public static RelativeDuration ParseExact(string? s, string? format = null)
+    public static RelativeDuration ParseExact(string s, string? format = null)
         => ParseExact(s, format, null);
 
     /// <summary>
@@ -229,7 +211,7 @@ public partial struct RelativeDuration
     /// chosen <seealso cref="ToString(string, IFormatProvider)"/>
     /// </para>
     /// </remarks>
-    public static bool TryParse(string? s, IFormatProvider? provider, out RelativeDuration result)
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out RelativeDuration result)
     {
         if (string.IsNullOrWhiteSpace(s))
         {
@@ -293,7 +275,7 @@ public partial struct RelativeDuration
     /// chosen <seealso cref="ToString(string, IFormatProvider)"/>
     /// </para>
     /// </remarks>
-    public static bool TryParse(string? s, out RelativeDuration result)
+    public static bool TryParse([NotNullWhen(true)] string? s, out RelativeDuration result)
         => TryParse(s, null, out result);
 
     /// <summary>
@@ -378,7 +360,7 @@ public partial struct RelativeDuration
     /// chosen <seealso cref="ToString(string, IFormatProvider)"/>
     /// </para>
     /// </remarks>
-    public static bool TryParseExact(string? s, string? format, IFormatProvider? provider, out RelativeDuration result)
+    public static bool TryParseExact([NotNullWhen(true)] string? s, string? format, IFormatProvider? provider, out RelativeDuration result)
     {
         if (string.IsNullOrWhiteSpace(s))
         {
@@ -454,7 +436,7 @@ public partial struct RelativeDuration
     /// chosen <seealso cref="ToString(string, IFormatProvider)"/>
     /// </para>
     /// </remarks>
-    public static bool TryParseExact(string? s, string? format, out RelativeDuration result)
+    public static bool TryParseExact([NotNullWhen(true)] string? s, string? format, out RelativeDuration result)
         => TryParseExact(s, format, null, out result);
 
     private static bool TryParseRelativeDuration(ReadOnlySpan<char> s, out RelativeDuration result)

@@ -2,7 +2,7 @@
 
 namespace Tavenem.Time;
 
-public partial struct Duration : IFormattable
+public partial struct Duration
 {
     /// <summary>
     /// Converts the value of the current <see cref="Duration"/> object to its equivalent string
@@ -279,7 +279,7 @@ public partial struct Duration : IFormattable
     /// </para>
     /// <para>
     /// Note carefully that this is in contrast to <see cref="DateTime"/> format strings, which
-    /// uses "z" to denote timezone.
+    /// uses "z" to denote time zone.
     /// </para>
     /// </description>
     /// </item>
@@ -613,7 +613,7 @@ public partial struct Duration : IFormattable
     /// </para>
     /// <para>
     /// Note carefully that this is in contrast to <see cref="DateTime"/> format strings, which
-    /// uses "z" to denote timezone.
+    /// uses "z" to denote time zone.
     /// </para>
     /// </description>
     /// </item>

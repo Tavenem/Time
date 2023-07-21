@@ -252,6 +252,33 @@ public partial struct Duration
         => FromNanosecondsFloatingPoint(value / T.CreateChecked(AttosecondsPerNanosecond));
 
     /// <summary>
+    /// Converts the given <see cref="DateOnly"/> value to a <see cref="Duration"/> value.
+    /// </summary>
+    /// <param name="dateOnly">A <see cref="DateOnly"/> value to convert.</param>
+    /// <returns>An equivalent <see cref="Duration"/> value.</returns>
+    /// <remarks>
+    /// <para>
+    /// The current aeon sequence of our universe is presumed to be 13799, based on current best
+    /// estimates (1.3799e10±2.1e7 years).
+    /// </para>
+    /// <para>
+    /// The <see cref="DateOnly"/> value is converted to a <see cref="Duration"/> instance by
+    /// presuming that the current aeon begins at the same moment as <see cref="DateTime.Ticks"/>
+    /// begins counting. The <see cref="DateTime.Ticks"/> of a <see cref="DateTime"/> created from
+    /// the <see cref="DateOnly"/> value are converted into the timekeeping system of <see
+    /// cref="Duration"/> based on that assumption.
+    /// </para>
+    /// <para>
+    /// For more accurate <see cref="DateOnly"/> conversion, consider using <see
+    /// cref="CosmicTime.FromDateOnly(DateOnly)"/>, which uses a much more precise estimation of the
+    /// relationship between the age of the universe and the basis used by <see cref="DateOnly"/>.
+    /// </para>
+    /// </remarks>
+    public static Duration FromDateOnly(DateOnly dateOnly) => new(
+        aeons: _DefaultAeons,
+        nanoseconds: (ulong)(dateOnly.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).Ticks * NanosecondsPerTick));
+
+    /// <summary>
     /// Converts the given <see cref="DateTime"/> value to a <see cref="Duration"/> value.
     /// </summary>
     /// <param name="dateTime">A <see cref="DateTime"/> value to convert.</param>
@@ -269,9 +296,9 @@ public partial struct Duration
     /// cref="Duration"/> based on that assumption.
     /// </para>
     /// <para>
-    /// The <see cref="DateTime.ToUniversalTime"/> method is used to ensure that timezone
+    /// The <see cref="DateTime.ToUniversalTime"/> method is used to ensure that time zone
     /// information is stripped prior to conversion. This means that converting various <see
-    /// cref="DateTime"/> instances with differing timezone information should result in uniform
+    /// cref="DateTime"/> instances with differing time zone information should result in uniform
     /// <see cref="Duration"/> representations.
     /// </para>
     /// <para>
@@ -281,8 +308,9 @@ public partial struct Duration
     /// cref="DateTime"/>.
     /// </para>
     /// </remarks>
-    public static Duration FromDateTime(DateTime dateTime)
-        => new(nanoseconds: (ulong)(dateTime.ToUniversalTime().Ticks * NanosecondsPerTick), aeons: _DefaultAeons);
+    public static Duration FromDateTime(DateTime dateTime) => new(
+        aeons: _DefaultAeons,
+        nanoseconds: (ulong)(dateTime.ToUniversalTime().Ticks * NanosecondsPerTick));
 
     /// <summary>
     /// Converts the given <see cref="DateTimeOffset"/> value to a <see cref="Duration"/> value.
@@ -302,9 +330,9 @@ public partial struct Duration
     /// cref="Duration"/> based on that assumption.
     /// </para>
     /// <para>
-    /// The <see cref="DateTimeOffset.ToUniversalTime"/> method is used to ensure that timezone
+    /// The <see cref="DateTimeOffset.ToUniversalTime"/> method is used to ensure that time zone
     /// information is stripped prior to conversion. This means that converting various <see
-    /// cref="DateTimeOffset"/> instances with differing timezone information should result in
+    /// cref="DateTimeOffset"/> instances with differing time zone information should result in
     /// uniform
     /// <see cref="Duration"/> representations.
     /// </para>
@@ -316,7 +344,7 @@ public partial struct Duration
     /// </para>
     /// </remarks>
     public static Duration FromDateTimeOffset(DateTimeOffset dateTime)
-        => new(nanoseconds: (ulong)(dateTime.ToUniversalTime().Ticks * NanosecondsPerTick), aeons: _DefaultAeons);
+        => new(aeons: _DefaultAeons, nanoseconds: (ulong)(dateTime.ToUniversalTime().Ticks * NanosecondsPerTick));
 
     /// <summary>
     /// Gets a new <see cref="Duration"/> instance with the given <paramref name="value"/>.
@@ -1324,6 +1352,37 @@ public partial struct Duration
         => FromNanosecondsFloatingPoint(value * T.CreateChecked(NanosecondsPerSecond));
 
     /// <summary>
+    /// Converts the given <see cref="TimeOnly"/> value to a <see cref="Duration"/> value.
+    /// </summary>
+    /// <param name="timeOnly">A <see cref="TimeOnly"/> value to convert.</param>
+    /// <returns>An equivalent <see cref="Duration"/> value.</returns>
+    /// <remarks>
+    /// <para>
+    /// The current aeon sequence of our universe is presumed to be 99731, based on current best
+    /// estimates (1.3799e10±2.1e7 years).
+    /// </para>
+    /// <para>
+    /// The <see cref="TimeOnly"/> value is converted to a <see cref="Duration"/> instance by
+    /// presuming that the current aeon begins at the same moment as <see
+    /// cref="TimeOnly.Ticks"/> begins counting. The <see cref="TimeOnly.Ticks"/> of the <see
+    /// cref="TimeOnly"/> value are converted into the timekeeping system of <see
+    /// cref="Duration"/> based on that assumption.
+    /// </para>
+    /// </remarks>
+    public static Duration FromTimeOnly(TimeOnly timeOnly)
+    {
+        var ticks = timeOnly.Ticks;
+        if (ticks == 0)
+        {
+            return Zero;
+        }
+        var isNegative = ticks < 0;
+        ticks = Math.Abs(ticks);
+        var ns = (ulong)ticks * NanosecondsPerTick;
+        return new Duration(isNegative, _DefaultAeons, nanoseconds: ns);
+    }
+
+    /// <summary>
     /// Converts the given <see cref="TimeSpan"/> value to a <see cref="Duration"/> value.
     /// </summary>
     /// <param name="timeSpan">A <see cref="TimeSpan"/> value to convert.</param>
@@ -1351,7 +1410,7 @@ public partial struct Duration
         var isNegative = ticks < 0;
         ticks = Math.Abs(ticks);
         var ns = (ulong)ticks * NanosecondsPerTick;
-        return new Duration(isNegative, nanoseconds: ns, aeons: _DefaultAeons);
+        return new Duration(isNegative, _DefaultAeons, nanoseconds: ns);
     }
 
     /// <summary>
