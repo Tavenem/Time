@@ -1,12 +1,12 @@
 # Changelog
 
-## 2.2-preview.1
+## 2.2
 ### Added
 - Source generated (de)serialization support
 ### Changed
 - Made `Epoch` a record
 ### Updated
-- Update to .NET 8 preview
+- Update to .NET 8
 
 ## 2.1
 ### Updated
