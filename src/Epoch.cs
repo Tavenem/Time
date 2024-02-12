@@ -29,8 +29,8 @@ public readonly record struct Epoch(Duration Duration, string? Name = null)
     /// of the Holocene, which would require every time to have magnitudes in the tens of
     /// thousands of years).
     /// </remarks>
-    public static readonly Epoch[] DefaultEpochs = new Epoch[]
-    {
+    public static readonly Epoch[] DefaultEpochs =
+    [
         new Epoch(Duration.OnePlanckTime, "Planck Epoch"),
         new Epoch(new Duration(planckTime: 185486000), "Grand unification Epoch"),
         new Epoch(new Duration(planckTime: 1854680000000), "Inflationary Epoch"),
@@ -38,27 +38,28 @@ public readonly record struct Epoch(Duration Duration, string? Name = null)
         new Epoch(new Duration(nanoseconds: 9999, yoctoseconds: Duration.YoctosecondsPerPicosecond * 990), "Quark Epoch"),
         new Epoch(new Duration(nanoseconds: 999990000), "Hadron Epoch"),
         new Epoch(new Duration(nanoseconds: (ulong)Duration.NanosecondsPerSecond * 9), "Lepton Epoch"),
-        new Epoch(new Duration(aeons: 3, years: 70000), "Photon Epoch"),
-        new Epoch(new Duration(aeons: 2996, years: 30000), "Cosmic Dark Ages"),
-        new Epoch(new Duration(aeons: 7003, years: 70000), "Reionization"),
-        new Epoch(new Duration(aeons: 85324, years: 30000), "Prior to the formation of Earth"),
-        new Epoch(new Duration(aeons: 5672), "Hadean Eon"),
-        new Epoch(new Duration(aeons: 15000), "Archean Eon"),
-        new Epoch(new Duration(aeons: 19590), "Proterozoic Eon"),
-        new Epoch(new Duration(aeons: 556), "Cambrian Period"),
-        new Epoch(new Duration(aeons: 416), "Ordovician Period"),
-        new Epoch(new Duration(aeons: 246), "Silurian Period"),
-        new Epoch(new Duration(aeons: 603), "Devonian Period"),
-        new Epoch(new Duration(aeons: 600), "Carboniferous Period"),
-        new Epoch(new Duration(aeons: 470), "Permian Period"),
-        new Epoch(new Duration(aeons: 563), "Jurassic Period"),
-        new Epoch(new Duration(aeons: 790), "Cretaceous Period"),
-        new Epoch(new Duration(aeons: 429, years: 70000), "Paleogene Period"),
-        new Epoch(new Duration(aeons: 176, years: 97000), "Miocene Epoch"),
-        new Epoch(new Duration(aeons: 27, years: 53000), "Pliocene Epoch"),
-        new Epoch(new Duration(aeons: 25, years: 68350), "Pleistocene Epoch"),
+        new Epoch(new Duration(years: 370000), "Photon Epoch"),
+        new Epoch(new Duration(years: 299630000), "Cosmic Dark Ages"),
+        new Epoch(new Duration(years: 700370000), "Reionization"),
+        new Epoch(new Duration(aeons: 8, years: 532430000), "Prior to the formation of Earth"),
+        new Epoch(new Duration(years: 536300000), "Hadean Eon"),
+        new Epoch(new Duration(aeons: 1, years: 531000000), "Archean Eon"),
+        new Epoch(new Duration(aeons: 1, years: 961200000), "Proterozoic Eon"),
+        new Epoch(new Duration(years: 53400000), "Cambrian Period"),
+        new Epoch(new Duration(years: 41600000), "Ordovician Period"),
+        new Epoch(new Duration(years: 24600000), "Silurian Period"),
+        new Epoch(new Duration(years: 60300000), "Devonian Period"),
+        new Epoch(new Duration(years: 60000000), "Carboniferous Period"),
+        new Epoch(new Duration(years: 47000000), "Permian Period"),
+        new Epoch(new Duration(years: 50500000), "Triassic Period"),
+        new Epoch(new Duration(years: 56300000), "Jurassic Period"),
+        new Epoch(new Duration(years: 79000000), "Cretaceous Period"),
+        new Epoch(new Duration(years: 42970000), "Paleogene Period"),
+        new Epoch(new Duration(years: 17697000), "Miocene Epoch"),
+        new Epoch(new Duration(years: 2753000), "Pliocene Epoch"),
+        new Epoch(new Duration(years: 2568350), "Pleistocene Epoch"),
         new Epoch(new Duration(years: 11576), "Holocene Epoch"),
-    };
+    ];
 
     /// <summary>
     /// The duration of this epoch.

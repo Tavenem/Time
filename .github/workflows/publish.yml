@@ -34,12 +34,10 @@ jobs:
         run: dotnet test --no-restore --verbosity normal
         working-directory: ./src
 
-      - uses: mukunku/tag-exists-action@v1.0.0
+      - uses: mukunku/tag-exists-action@v1.6.0
         id: checkTag
         with: 
           tag: 'v${{ steps.nbgv.outputs.Version }}'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pack
         if: steps.nbgv.outputs.PublicRelease && steps.checkTag.outputs.exists != 'true'
@@ -62,7 +60,7 @@ jobs:
       - name: Release
         if: steps.nbgv.outputs.PublicRelease && steps.checkTag.outputs.exists != 'true'
         id: create_release
-        uses: softprops/action-gh-release@v0.1.14
+        uses: softprops/action-gh-release@v0.1.15
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:

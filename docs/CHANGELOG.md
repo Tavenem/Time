@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3
+### Fixed
+- Correct Epoch durations
+
 ## 2.2
 ### Added
 - Source generated (de)serialization support
