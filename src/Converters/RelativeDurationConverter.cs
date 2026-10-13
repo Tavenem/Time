@@ -23,10 +23,12 @@ public class RelativeDurationConverter : JsonConverter<RelativeDuration>
     /// <param name="typeToConvert">The type to convert.</param>
     /// <param name="options">An object that specifies serialization options to use.</param>
     /// <returns>The converted value.</returns>
-    public override RelativeDuration Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => RelativeDuration.ParseExact(
-        reader.GetString(),
-        "o",
-        CultureInfo.InvariantCulture);
+    public override RelativeDuration Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => reader.GetString() is string s
+        ? RelativeDuration.ParseExact(
+            s,
+            "o",
+            CultureInfo.InvariantCulture)
+        : throw new JsonException($"Unable to convert \"{reader.GetString()}\" to {typeof(RelativeDuration)}.");
 
     /// <inheritdoc />
     public override RelativeDuration ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.4
+### Changed
+- Update to .NET 10
+
 ## 2.3
 ### Fixed
 - Correct Epoch durations

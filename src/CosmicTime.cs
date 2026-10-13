@@ -20,7 +20,7 @@ namespace Tavenem.Time;
 /// offset from the start of the current epoch.
 /// </para>
 /// <para>
-/// Note that adding an epoch to the end of the colleciton does not affect the value of any existing
+/// Note that adding an epoch to the end of the collection does not affect the value of any existing
 /// <see cref="Instant"/> instances: they will still reference their original epoch, and should
 /// continue to refer to the same moment. Removing an epoch, inserting one anywhere but at the end
 /// of the collection, or even replacing an epoch with one that has a different duration, will all
@@ -59,7 +59,7 @@ public class CosmicTime : IEquatable<CosmicTime?>
     /// the last epoch.
     /// </para>
     /// </summary>
-    public List<Epoch> Epochs { get; set; } = Epoch.DefaultEpochs.ToList();
+    public List<Epoch> Epochs { get; set; } = [.. Epoch.DefaultEpochs];
 
 #pragma warning disable IDE0032 // Use auto property; requires init for deserialization, and private setter
     private Instant _now;

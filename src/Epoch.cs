@@ -21,13 +21,11 @@ public readonly record struct Epoch(Duration Duration, string? Name = null)
     /// The epochs which make up our universe.
     /// </summary>
     /// <remarks>
-    /// Although the Holocene is still officially defined as the current geologic epoch,
-    /// indications are strong that the Anthropocene will be formally adopted in the near
-    /// future, with a start date set in the mid 20th century. In order to keep <see
-    /// cref="CosmicTime"/> instances as simple as possible, this library anticipates that
-    /// decision so that current times can be referenced to that point (rather than to the start
-    /// of the Holocene, which would require every time to have magnitudes in the tens of
-    /// thousands of years).
+    /// Although the Holocene is still officially defined as the current geologic epoch, the
+    /// unofficial "Anthropocene" epoch is adopted by this library in order to keep <see
+    /// cref="CosmicTime"/> instances as simple as possible, so that current times can be referenced
+    /// to a point in the mid-20th century(rather than to the start of the Holocene, which would
+    /// require every time to have magnitudes in the tens of thousands of years).
     /// </remarks>
     public static readonly Epoch[] DefaultEpochs =
     [

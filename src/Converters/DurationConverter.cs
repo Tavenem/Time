@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -18,15 +17,17 @@ public class DurationConverter : JsonConverter<Duration>
     /// </returns>
     public override bool CanConvert(Type typeToConvert) => typeToConvert == typeof(Duration);
 
-    /// <summary>Reads and converts the JSON to <see cref="BigInteger"/>.</summary>
+    /// <summary>Reads and converts the JSON to <see cref="Duration"/>.</summary>
     /// <param name="reader">The reader.</param>
     /// <param name="typeToConvert">The type to convert.</param>
     /// <param name="options">An object that specifies serialization options to use.</param>
     /// <returns>The converted value.</returns>
-    public override Duration Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => Duration.ParseExact(
-        reader.GetString(),
-        "o",
-        CultureInfo.InvariantCulture);
+    public override Duration Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => reader.GetString() is string s
+        ? Duration.ParseExact(
+            s,
+            "o",
+            CultureInfo.InvariantCulture)
+        : throw new JsonException($"Unable to convert \"{reader.GetString()}\" to {typeof(Duration)}.");
 
     /// <inheritdoc />
     public override Duration ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
